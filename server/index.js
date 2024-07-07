@@ -1,5 +1,5 @@
-import mongodb from "mongodb";
 import dotenv from "dotenv";
+import mongoose from "mongoose";
 import app from "./server.js"
 
 async function main() {
@@ -8,10 +8,9 @@ async function main() {
     const dbURI = process.env.LOST_AND_FOUND_DB_URI;
     const port = process.env.PORT;
 
-    const client = new mongodb.MongoClient(dbURI);
 
     try {
-        await client.connect();
+        await mongoose.connect(dbURI)
 
         app.listen(port, () => {
             console.log(`Server is running on http://localhost:${port}`);
