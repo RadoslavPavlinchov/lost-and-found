@@ -2,10 +2,10 @@
   "name": "server",
   "version": "1.0.0",
   "description": "lost-and-found server",
-  "main": "server.js",
+  "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "nodemon index.js"
   },
   "author": "Radoslav Pavlinchov",
   "license": "ISC",
