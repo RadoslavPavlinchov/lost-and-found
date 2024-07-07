@@ -1,4 +1,5 @@
 import express from 'express';
+import { createUser } from "../controllers/userController.js";
 
 const router = express.Router();
 
@@ -13,9 +14,7 @@ router.get("/:id", (req, res) => {
 });
 
 // create new user
-router.post("/", (req, res) => {
-    res.send("create new user");
-});
+router.post("/", createUser);
 
 // update user
 router.patch("/:id", (req, res) => {
