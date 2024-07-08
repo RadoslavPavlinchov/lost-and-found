@@ -1,0 +1,11 @@
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.app {
+  text-align: center;
+  /* background-color: #f0f0f0; */
+  /* padding: 20px; */
+}
