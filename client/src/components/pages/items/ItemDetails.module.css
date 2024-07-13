@@ -1,0 +1,8 @@
+.itemDetails {
+    padding: 20px;
+    border-left: 1px solid #ddd;
+}
+
+.itemDetails h2 {
+    margin-top: 0;
+}
