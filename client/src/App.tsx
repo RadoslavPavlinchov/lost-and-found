@@ -1,36 +1,41 @@
-import Header from "./components/layout/Header"
+import { Routes, Route } from "react-router-dom"
 import styles from "./App.module.css"
-import Home from "./components/pages/Home"
 
-import { useState } from "react"
-import Login from "./components/auth/Login"
-import Register from "./components/auth/Register"
+import routesConfig from "./configs/routesConfig"
+
+import Header from "./components/layout/Header"
 import Footer from "./components/layout/Footer"
 
 function App() {
-	const [currentPage, setCurrentPage] = useState("home")
-
-	function showPage(): JSX.Element {
-		if (currentPage === "home") {
-			return <Home />
-		}
-
-		if (currentPage === "login") {
-			return <Login />
-		}
-
-		if (currentPage === "register") {
-			return <Register />
-		}
-
-		return <Home />
-	}
-
 	return (
 		<div className={styles.app}>
-			<Header setCurrentPage={setCurrentPage} />
-			<main>{showPage()}</main>
+
+			<Header />
+
+			<main>
+
+				<Routes>
+					{
+						routesConfig.map(route => {
+							return (
+								<Route
+									key={route.key}
+									path={route.path}
+									element={
+										<
+											route.element
+										/>
+									}
+								/>
+							)
+						})
+					}
+				</Routes>
+
+			</main>
+
 			<Footer />
+
 		</div>
 	)
 }

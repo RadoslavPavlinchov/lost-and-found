@@ -1,27 +1,28 @@
+import { Link } from "react-router-dom"
 import styles from "./Navbar.module.css"
+import navigationConfig from "../../configs/navigationConfig"
 
-export default function Navbar({ setCurrentPage }) {
+// To-Do: use NavLink component to add styles dynamically due to having inside state
+
+export default function Navbar() {
     return (
         <nav className={styles.navbar}>
             <ul className={styles.navList}>
-                <li className={styles.navItem}>
-                    <a href="#" className={styles.navLink} onClick={() => setCurrentPage("home")}>Home</a>
-                </li>
-                <li className={styles.navItem}>
-                    <a href="#" className={styles.navLink}>Items</a>
-                </li>
-                <li className={styles.navItem}>
-                    <a href="#" className={styles.navLink}>About Us</a>
-                </li>
-                <li className={styles.navItem}>
-                    <a href="#" className={styles.navLink}>Contacts</a>
-                </li>
-                <li className={styles.navItem}>
-                    <a href="#" className={styles.navLink} onClick={() => setCurrentPage("register")}>Register</a>
-                </li>
-                <li className={styles.navItem}>
-                    <a href="#" className={styles.navLink} onClick={() => setCurrentPage("login")}>Login</a>
-                </li>
+                {
+                    navigationConfig.map(navItem => {
+                        return (
+                            <li key={navItem.text} className={styles.navItem}>
+                                <Link
+                                    to={navItem.to}
+                                    className={styles.navLink}
+                                >
+                                    {navItem.text}
+                                </Link>
+                            </li>
+                        )
+                    })
+                }
+
             </ul>
         </nav >
     )
