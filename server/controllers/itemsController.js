@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import Item from "../models/itemModel.js";
+import Item from "../models/Item.js"
 
 const getAllItems = async (req, res) => {
     try {
