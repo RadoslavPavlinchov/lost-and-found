@@ -4,9 +4,8 @@ import Navbar from './Navbar';
 export default function Header() {
     return (
         <header className={styles.header}>
-            <h1>App header</h1>
-
             <Navbar />
+            <h1>Lost And Found Platform</h1>
         </header>
     )
 }
