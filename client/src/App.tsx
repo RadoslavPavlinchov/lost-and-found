@@ -1,42 +1,59 @@
-import { Routes, Route } from "react-router-dom"
-import styles from "./App.module.css"
-
+import { Routes, Route, BrowserRouter } from "react-router-dom"
+// import styles from "./App.module.css"
 import routesConfig from "./configs/routesConfig"
+import Layout from "./components/layout/Layout"
 
-import Header from "./components/layout/Header"
-import Footer from "./components/layout/Footer"
-
-function App() {
-	return (
-		<div className={styles.app}>
-
-			<Header />
-
-			<main>
-
-				<Routes>
+function createRoutes(routesConfig) {
+	return routesConfig.map(route => {
+		if (route.children) {
+			return (
+				<Route key={route.key} path={route.path} element={< route.element />}>
 					{
-						routesConfig.map(route => {
+						route.children.map(child => {
 							return (
 								<Route
-									key={route.key}
-									path={route.path}
+									key={child.key}
+									path={child.path}
 									element={
-										<
-											route.element
-										/>
+										< child.element />
 									}
 								/>
 							)
 						})
 					}
-				</Routes>
+				</Route>
+			)
+		}
 
-			</main>
+		return (
+			<Route
+				key={route.key}
+				path={route.path}
+				element={
+					< route.element />
+				}
+			/>
+		)
+	})
+}
 
-			<Footer />
+function App() {
+	return (
+		<BrowserRouter>
 
-		</div>
+			{/* <div className={styles.app}> */}
+
+			<Routes>
+				<Route element={<Layout />}>
+					{
+						createRoutes(routesConfig)
+					}
+				</Route>
+			</Routes>
+
+			{/* </div > */}
+
+		</BrowserRouter>
 	)
 }
 
