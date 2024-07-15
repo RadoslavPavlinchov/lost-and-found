@@ -1,4 +1,6 @@
 import Admin from "../components/pages/admin/Admin";
+import AdminUsers from "../components/pages/admin/AdminUsers";
+import AdminItems from "../components/pages/admin/AdminItems";
 import Login from "../components/pages/auth/Login";
 import Register from "../components/pages/auth/Register";
 import Home from "../components/pages/home/Home";
@@ -33,9 +35,21 @@ const routesConfig = [
     //     path: "/contacts"
     // },
     {
-        key: "home",
+        key: "admin",
         element: Admin,
         path: "/admin",
+        children: [
+            {
+                key: "admin-users",
+                element: AdminUsers,
+                path: "/admin/users",
+            },
+            {
+                key: "admin-items",
+                element: AdminItems,
+                path: "/admin/items",
+            }
+        ]
     },
     {
         key: "register",

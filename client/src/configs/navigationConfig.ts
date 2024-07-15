@@ -1,4 +1,5 @@
 const navigationConfig = [
+    { text: "L&F", to: "/" },
     { text: "Home", to: "/" },
     { text: "Items", to: "/items" },
     { text: "About Us", to: "/about" },
