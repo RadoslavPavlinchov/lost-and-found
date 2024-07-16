@@ -1,32 +1,34 @@
-import { useEffect, useState } from "react";
+import List from "../../common/List"
+import { useGetUsersQuery } from "../../../app/api/userApiSlice"
 
 export default function AdminUsers() {
-    const baseUrl = "http://localhost:3000/api/"
+    const {
+        data: users,
+        isLoading,
+        isSuccess,
+        isError,
+        error
+    } = useGetUsersQuery()
 
-    const [users, setUsers] = useState([])
+    let content
 
-    useEffect(() => {
-        async function getUsers() {
-            try {
-                const res = await fetch(`${baseUrl}users/`)
-                const jsonResult = await res.json()
-                setUsers(jsonResult)
-            } catch (error) {
-                console.log({ error })
-            }
-        }
+    if (isLoading) {
+        content = <div>Loading...</div>
+    }
 
-        getUsers()
+    if (isError) {
+        content = <div>Error: {error.data?.message}</div>
+    }
 
-    }, [])
+    if (isSuccess) {
+        const { ids } = users
+
+        content = <List usersIds={ids} />
+    }
 
     return (
-        <div>
-            <p>Admin User Page</p>
-
-            <ul>{users.map(user => (
-                <li key={user._id}>{user.email}</li>
-            ))}</ul>
-        </div>
+        <section className="card users-container">
+            {content}
+        </section>
     )
 }
