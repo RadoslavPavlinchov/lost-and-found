@@ -19,12 +19,12 @@ const routesConfig = [
     {
         key: "items",
         element: Items,
-        path: "/items"
+        path: "items"
     },
     {
         key: "/items/:id",
         element: ItemDetails,
-        path: "/items/:id"
+        path: "items/:id"
     },
     // {
     //     element: "About Us",
@@ -37,29 +37,29 @@ const routesConfig = [
     {
         key: "admin",
         element: Admin,
-        path: "/admin",
+        path: "admin",
         children: [
             {
                 key: "admin-users",
                 element: AdminUsers,
-                path: "/admin/users",
+                path: "users",
             },
             {
                 key: "admin-items",
                 element: AdminItems,
-                path: "/admin/items",
+                path: "items",
             }
         ]
     },
     {
         key: "register",
         element: Register,
-        path: "/register",
+        path: "register",
     },
     {
         key: "login",
         element: Login,
-        path: "/login",
+        path: "login",
     },
     {
         key: "not-found",
