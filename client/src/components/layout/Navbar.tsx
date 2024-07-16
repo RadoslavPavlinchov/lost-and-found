@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"
+import { NavLink } from "react-router-dom"
 import styles from "./Navbar.module.css"
 import navigationConfig from "../../configs/navigationConfig"
 
@@ -12,12 +12,12 @@ export default function Navbar() {
                     navigationConfig.map(navItem => {
                         return (
                             <li key={navItem.text} className={styles.navItem}>
-                                <Link
+                                <NavLink
                                     to={navItem.to}
-                                    className={styles.navLink}
+                                    className={({ isActive }) => isActive ? styles.activeNavLink : styles.navLink}
                                 >
                                     {navItem.text}
-                                </Link>
+                                </NavLink>
                             </li>
                         )
                     })
