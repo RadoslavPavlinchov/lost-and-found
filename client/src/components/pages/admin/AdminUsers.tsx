@@ -1,5 +1,6 @@
 import List from "../../common/List"
 import { useGetUsersQuery } from "../../../app/api/userApiSlice"
+import { Link } from "react-router-dom"
 
 export default function AdminUsers() {
     const {
@@ -8,7 +9,11 @@ export default function AdminUsers() {
         isSuccess,
         isError,
         error
-    } = useGetUsersQuery()
+    } = useGetUsersQuery(undefined, {
+        pollingInterval: 60000,
+        refetchOnFocus: true,
+        refetchOnMountOrArgChange: true
+    })
 
     let content
 
@@ -29,6 +34,8 @@ export default function AdminUsers() {
     return (
         <section className="card users-container">
             {content}
+
+            <button><Link to="create" className="btn-add btn">Create New User</Link></button>
         </section>
     )
 }
