@@ -7,6 +7,8 @@ import Home from "../components/pages/home/Home";
 import Items from "../components/pages/items/Items";
 import ItemDetails from "../components/pages/items/ItemDetails";
 import NotFound from "../components/pages/notFound/NotFound";
+import AdminEditUser from "../components/pages/admin/AdminEditUser";
+import AdminCreateUser from "../components/pages/admin/AdminCreateUser";
 
 // To-Do: add aditional property called "additionalProps" or "props" if needed
 
@@ -43,6 +45,16 @@ const routesConfig = [
                 key: "admin-users",
                 element: AdminUsers,
                 path: "users",
+            },
+            {
+                key: "admin-users-edit",
+                element: AdminEditUser,
+                path: "users/:id",
+            },
+            {
+                key: "admin-users-create",
+                element: AdminCreateUser,
+                path: "users/create",
             },
             {
                 key: "admin-items",
