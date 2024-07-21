@@ -1,7 +1,10 @@
 import express from 'express';
 import { createItem, deleteItem, getAllItems, getItem, updateItem } from "../controllers/itemsController.js";
+// import verifyJWT from "../middleware/verifyJWT.js";
 
 const router = express.Router();
+
+// router.use(verifyJWT);
 
 router.get("/", getAllItems);
 router.get("/:id", getItem);

@@ -24,21 +24,29 @@ const login = async (req, res) => {
 
         const accessToken = jwt.sign(
             {
-                id: user._id
+                'userInfo': {
+                    id: user._id,
+                    email: user.email,
+                    name: user.name,
+                    role: user.role
+                }
             },
             process.env.ACCESS_TOKEN_SECRET,
             {
-                expiresIn: "15m"
+                expiresIn: "10s"
             }
         )
 
         const refreshToken = jwt.sign(
             {
-                id: user._id
+                id: user._id,
+                email: user.email,
+                name: user.name,
+                role: user.role
             },
             process.env.REFRESH_TOKEN_SECRET,
             {
-                expiresIn: "7d"
+                expiresIn: "1m"
             }
         )
 
@@ -58,11 +66,13 @@ const login = async (req, res) => {
 const logout = async (req, res) => {
     try {
         const cookies = req.cookies
-        if (!cookies.jwt) {
-            return res.status(401).json({ msg: "Unauthorized" })
+
+        if (!cookies?.jwt) {
+            return res.status(204).json({ msg: "No content" })
         }
 
-        res.clearCookie("jwt", {httpOnly: true, secure: true, sameSite: "None"})
+        res.clearCookie("jwt", { httpOnly: true, secure: true, sameSite: "None" })
+
         res.json({ msg: "Logged out" })
     } catch (error) {
         res.status(400).json({ msg: error })
@@ -95,17 +105,20 @@ const refresh = async (req, res) => {
 
                 const accessToken = jwt.sign(
                     {
-                        id: user.id
+                        'userInfo': {
+                            id: foundUser._id,
+                            email: foundUser.email,
+                            name: foundUser.name,
+                            role: foundUser.role
+                        }
                     },
                     process.env.ACCESS_TOKEN_SECRET,
                     {
-                        expiresIn: "15m"
+                        expiresIn: "10s"
                     }
                 )
 
-                res.json({
-                    accessToken
-                })
+                res.json({ accessToken })
             })
 
     } catch (error) {
