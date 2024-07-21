@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { useUpdateUserMutation, useDeleteUserMutation } from "../../../app/api/userApiSlice"
+import { useUpdateUserMutation, useDeleteUserMutation } from "../../../app/api/usersApiSlice"
 import { useNavigate } from "react-router-dom"
 
 export default function EditUserForm({ user }) {

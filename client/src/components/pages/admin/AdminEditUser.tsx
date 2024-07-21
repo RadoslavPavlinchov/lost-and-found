@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom"
 import { useSelector } from "react-redux"
-import { selectUserById } from "../../../app/api/userApiSlice"
+import { selectUserById } from "../../../app/api/usersApiSlice"
 import AdminEditUserForm from "./AdminEditUserForm"
 
 

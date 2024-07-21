@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'
-import { useAddNewUserMutation } from '../../../app/api/userApiSlice'
+import { useAddNewUserMutation } from '../../../app/api/usersApiSlice'
 
 export default function AdminCreateUser() {
     const [addNewUser, {

@@ -1,7 +1,7 @@
 import { useEffect } from "react"
 import { Link, Outlet } from 'react-router-dom'
 import { store } from "../../../app/store"
-import { usersApiSlice } from "../../../app/api/userApiSlice"
+import { usersApiSlice } from "../../../app/api/usersApiSlice"
 
 export default function Admin() {
     useEffect(() => {
