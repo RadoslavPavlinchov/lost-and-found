@@ -3,6 +3,7 @@ import { NavLink, useNavigate } from "react-router-dom"
 import styles from "./Navbar.module.css"
 import navigationConfig from "../../configs/navigationConfig"
 import { useLogoutMutation } from "../../app/api/authApiSlice"
+import useAuth from "../../customHooks/useAuth"
 
 // To-Do: use NavLink component to add styles dynamically due to having inside state
 
@@ -15,6 +16,8 @@ export default function Navbar() {
         isError,
         error
     }] = useLogoutMutation()
+
+    const { name, isAdmin } = useAuth()
 
     // useEffect(() => {
     //     console.log("isSuccess", isSuccess)
@@ -44,11 +47,32 @@ export default function Navbar() {
         }
     }
 
+    const visibleNavigationItems = navigationConfig.filter(navItem => {
+        console.log("navItem 1", navItem.visibility.admin, isAdmin)
+
+        // PUBLIC ROUTES
+        if (!name) {
+            return navItem.visibility.public
+        }
+
+        // PRIVATE ROUTES: Admin only
+        if (isAdmin) {
+            return navItem.visibility.private.includes("admin")
+        }
+
+        return navItem.visibility.private.includes("user")
+    })
+
     return (
         <nav className={styles.navbar}>
+            {/* create separate component for the logo */}
+            {
+                <NavLink to={"/"}><p>L&F</p></NavLink>
+            }
+
             <ul className={styles.navList}>
                 {
-                    navigationConfig.map(navItem => {
+                    visibleNavigationItems.map(navItem => {
                         return (
                             <li key={navItem.text} className={styles.navItem}>
                                 <NavLink
@@ -61,16 +85,19 @@ export default function Navbar() {
                         )
                     })
                 }
-
             </ul>
+            {/* create separate component for the current user and logout button */}
+            {name && <p>Current User: {name}</p>}
 
-            {/* // TODO: checkout if a button or additional NavLink is needed */}
-            <button
-                className={styles.logoutButton}
-                onClick={handleLogout}
-            >
-                Logout
-            </button>
+            {
+                name &&
+                <button
+                    className={styles.logoutButton}
+                    onClick={handleLogout}
+                >
+                    Logout
+                </button>
+            }
         </nav >
     )
 }
