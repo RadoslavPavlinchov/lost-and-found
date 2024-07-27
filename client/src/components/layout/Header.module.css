@@ -4,3 +4,40 @@
     color: white;
     text-align: center;
 }
+
+/* .navbar {
+    width: 100%;
+    height: 70px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+} */
+
+/* .navList {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+} */
+
+/* .navItem {
+    padding: 1rem;
+} */
+
+.navLink {
+    color: white;
+    /* font-size: 1rem; */
+}
+
+.activeNavLink {
+    /* font-weight: bold; */
+    color: white;
+    /* font-size: 1rem; */
+    text-decoration: underline;
+}
+
+.navLink:hover {
+    text-decoration: underline;
+}

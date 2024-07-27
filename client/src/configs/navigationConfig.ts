@@ -5,57 +5,57 @@ const navigationConfig = [
         to: "/",
         visibility: {
             private: ["user", "admin"],
-            public: true
-        }
+            public: true,
+        },
     },
     {
         text: "Items",
         to: "/items",
         visibility: {
             private: ["user", "admin"],
-            public: true
-        }
+            public: true,
+        },
     },
     {
         text: "About Us",
         to: "/about",
         visibility: {
             private: ["user"],
-            public: true
-        }
+            public: true,
+        },
     },
     {
         text: "Contacts",
         to: "/contacts",
         visibility: {
             private: ["user"],
-            public: true
-        }
+            public: true,
+        },
     },
     {
         text: "Admin",
         to: "/admin",
         visibility: {
             private: ["admin"],
-            public: false
-        }
+            public: false,
+        },
     },
-    {
-        text: "Register",
-        to: "/register",
-        visibility: {
-            private: [],
-            public: true
-        }
-    },
-    {
-        text: "Login",
-        to: "/login",
-        visibility: {
-            private: [],
-            public: true
-        }
-    },
-];
+    // {
+    //     text: "Register",
+    //     to: "/register",
+    //     visibility: {
+    //         private: [],
+    //         public: true
+    //     }
+    // },
+    // {
+    //     text: "Login",
+    //     to: "/login",
+    //     visibility: {
+    //         private: [],
+    //         public: true
+    //     }
+    // },
+]
 
-export default navigationConfig;
+export default navigationConfig
