@@ -10,12 +10,15 @@ import useAuth from "../../customHooks/useAuth"
 export default function Navbar() {
     const navigate = useNavigate()
 
-    const [logout, {
-        isLoading,
-        // isSuccess,
-        isError,
-        error
-    }] = useLogoutMutation()
+    const [
+        logout,
+        {
+            isLoading,
+            // isSuccess,
+            isError,
+            error,
+        },
+    ] = useLogoutMutation()
 
     const { name, isAdmin } = useAuth()
 
@@ -41,13 +44,12 @@ export default function Navbar() {
             // if (isSuccess) {
             navigate("/")
             // }
-
         } catch (error) {
             console.error("Error logging out", error)
         }
     }
 
-    const visibleNavigationItems = navigationConfig.filter(navItem => {
+    const visibleNavigationItems = navigationConfig.filter((navItem) => {
         console.log("navItem 1", navItem.visibility.admin, isAdmin)
 
         // PUBLIC ROUTES
@@ -64,40 +66,33 @@ export default function Navbar() {
     })
 
     return (
-        <nav className={styles.navbar}>
-            {/* create separate component for the logo */}
-            {
-                <NavLink to={"/"}><p>L&F</p></NavLink>
-            }
-
-            <ul className={styles.navList}>
-                {
-                    visibleNavigationItems.map(navItem => {
-                        return (
-                            <li key={navItem.text} className={styles.navItem}>
-                                <NavLink
-                                    to={navItem.to}
-                                    className={({ isActive }) => isActive ? styles.activeNavLink : styles.navLink}
-                                >
-                                    {navItem.text}
-                                </NavLink>
-                            </li>
-                        )
-                    })
-                }
+        <nav className="">
+            <ul className="flex gap-4">
+                {visibleNavigationItems.map((navItem) => {
+                    return (
+                        <li key={navItem.text} className={styles.navItem}>
+                            <NavLink
+                                to={navItem.to}
+                                className={({ isActive }) =>
+                                    isActive
+                                        ? styles.activeNavLink
+                                        : styles.navLink
+                                }
+                            >
+                                {navItem.text}
+                            </NavLink>
+                        </li>
+                    )
+                })}
             </ul>
             {/* create separate component for the current user and logout button */}
             {name && <p>Current User: {name}</p>}
 
-            {
-                name &&
-                <button
-                    className={styles.logoutButton}
-                    onClick={handleLogout}
-                >
+            {name && (
+                <button className={styles.logoutButton} onClick={handleLogout}>
                     Logout
                 </button>
-            }
-        </nav >
+            )}
+        </nav>
     )
 }

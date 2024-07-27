@@ -1,37 +1,33 @@
-.navbar {
+/* .navbar {
     width: 100%;
     height: 70px;
-    background-color: #333;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
-}
+} */
 
-.navList {
-    /* list-style: none; */
+/* .navList {
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0;
     padding: 0;
-}
+} */
 
-.navItem {
-    /* margin: 0 15px; */
+/* .navItem {
     padding: 1rem;
-}
+} */
 
 .navLink {
-    /* text-decoration: none; */
     color: white;
-    font-size: 1rem;
+    /* font-size: 1rem; */
 }
 
 .activeNavLink {
-    font-weight: bold;
+    /* font-weight: bold; */
     color: white;
-    font-size: 1rem;
+    /* font-size: 1rem; */
     text-decoration: underline;
 }
 
