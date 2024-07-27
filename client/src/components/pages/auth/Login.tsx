@@ -1,19 +1,19 @@
 import { useRef, useState, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { useDispatch } from "react-redux"
 
 import { setCredentials } from "../../../app/api/authSlice"
 import { useLoginMutation } from "../../../app/api/authApiSlice"
 
-import styles from "./Auth.module.css"
-
 export default function Login() {
     const emailRef = useRef()
     const errorRef = useRef()
 
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
-    const [errMsg, setErrMsg] = useState("")
+    const [formData, setFormData] = useState({
+        email: "",
+        password: "",
+    })
+    const [errorMsg, setErrorMsg] = useState("")
 
     const navigate = useNavigate()
     const dispatch = useDispatch()
@@ -25,84 +25,93 @@ export default function Login() {
     }, [])
 
     useEffect(() => {
-        setErrMsg('')
-    }, [email, password])
+        setErrorMsg("")
+    }, [formData])
 
     const handleSubmit = async (e) => {
         e.preventDefault()
 
         try {
-            const { accessToken } = await login({ email, password }).unwrap()
+            const { accessToken } = await login(formData).unwrap()
 
             dispatch(setCredentials({ accessToken }))
 
-            setEmail("")
-            setPassword("")
+            setFormData({
+                email: "",
+                password: "",
+            })
 
             navigate("/")
         } catch (error) {
             if (!error.status) {
-                return setErrMsg("Network error")
+                return setErrorMsg("Network error")
             }
 
             if (error.status === 400) {
-                return setErrMsg("Invalid credentials")
+                return setErrorMsg("Invalid credentials")
             }
 
             if (error.status === 401) {
-                return setErrMsg("Unauthorized")
+                return setErrorMsg("Unauthorized")
             }
 
-            setErrMsg(error.data?.message)
+            setErrorMsg(error.data?.message)
 
             errorRef.current.focus()
         }
-
     }
 
-    const handleEmailInput = (e) => {
-        setEmail(e.target.value)
-    }
-
-    const handlePasswordInput = (e) => {
-        setPassword(e.target.value)
+    const handleChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.id]: e.target.value,
+        })
     }
 
     if (isLoading) return <div>Loading...</div>
 
     return (
-        <div className={styles.auth}>
-            <h2>Login</h2>
+        <div className="max-w-md mx-auto">
+            <p ref={errorRef}>{errorMsg}</p>
 
-            <p ref={errorRef}>{errMsg}</p>
+            <h2 className="text-center my-7">Login</h2>
 
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label htmlFor="email">Email</label>
-                    <input
-                        type="email"
-                        id="email"
-                        value={email}
-                        ref={emailRef}
-                        onChange={handleEmailInput}
-                        placeholder="Email"
-                        autoComplete="email" // off
-                        required
-                    />
+            <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+                <input
+                    className="border rounded-xl p-2"
+                    type="email"
+                    id="email"
+                    value={formData.email}
+                    ref={emailRef}
+                    onChange={handleChange}
+                    placeholder="Email"
+                    required
+                />
+
+                <input
+                    className="border rounded-xl p-2"
+                    type="password"
+                    id="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="Password"
+                    required
+                />
+
+                <button
+                    className="bg-blue text-white rounded-xl p-2"
+                    type="submit"
+                >
+                    Login
+                </button>
+
+                <div className="flex justify-center gap-2 p-2 mt-4">
+                    <p>Don't have an account yet?</p>
+                    <Link to="/register">
+                        <span className="text-blue">Register</span>
+                    </Link>
                 </div>
-                <div>
-                    <label htmlFor="password">Password</label>
-                    <input
-                        type="password"
-                        id="password"
-                        value={password}
-                        onChange={handlePasswordInput}
-                        placeholder="Password"
-                        required
-                    />
-                </div>
-                <button>Login</button>
             </form>
         </div>
-    );
+    )
 }
