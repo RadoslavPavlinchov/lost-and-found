@@ -1,6 +1,6 @@
-import express from 'express'
+import express from "express"
 import cors from "cors"
-import cookieParser from 'cookie-parser'
+import cookieParser from "cookie-parser"
 import corsOptions from "./config/corsOptions.js"
 import authRoutes from "./routes/auth.js"
 import usersRoutes from "./routes/users.js"
@@ -17,8 +17,7 @@ app.use("/api/users", usersRoutes)
 app.use("/api/items", itemsRoutes)
 
 app.use("*", (req, res) => {
-  res.status(404).json({ error: "not found" })
-
+    res.status(404).json({ error: "not found" })
 })
 
 export default app

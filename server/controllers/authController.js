@@ -7,13 +7,17 @@ const login = async (req, res) => {
         const { email, password } = req.body
 
         if (!email || !password) {
-            return res.status(400).json({ msg: "Not all fields have been entered." })
+            return res
+                .status(400)
+                .json({ msg: "Not all fields have been entered." })
         }
 
         const user = await User.findOne({ email }).exec()
 
         if (!user) {
-            return res.status(400).json({ msg: "No account with this email has been registered." })
+            return res.status(400).json({
+                msg: "No account with this email has been registered.",
+            })
         }
 
         const isMatch = await bcrypt.compare(password, user.password)
@@ -24,16 +28,16 @@ const login = async (req, res) => {
 
         const accessToken = jwt.sign(
             {
-                'userInfo': {
+                userInfo: {
                     id: user._id,
                     email: user.email,
                     name: user.name,
-                    role: user.role
-                }
+                    role: user.role,
+                },
             },
             process.env.ACCESS_TOKEN_SECRET,
             {
-                expiresIn: "10s"
+                expiresIn: "1d",
             }
         )
 
@@ -42,11 +46,11 @@ const login = async (req, res) => {
                 id: user._id,
                 email: user.email,
                 name: user.name,
-                role: user.role
+                role: user.role,
             },
             process.env.REFRESH_TOKEN_SECRET,
             {
-                expiresIn: "1m"
+                expiresIn: "7d",
             }
         )
 
@@ -54,7 +58,7 @@ const login = async (req, res) => {
             httpOnly: true,
             secure: true,
             sameSite: "None",
-            maxAge: 7 * 24 * 60 * 60 * 1000
+            maxAge: 7 * 24 * 60 * 60 * 1000,
         })
 
         res.json({ accessToken })
@@ -71,11 +75,82 @@ const logout = async (req, res) => {
             return res.status(204).json({ msg: "No content" })
         }
 
-        res.clearCookie("jwt", { httpOnly: true, secure: true, sameSite: "None" })
+        res.clearCookie("jwt", {
+            httpOnly: true,
+            secure: true,
+            sameSite: "None",
+        })
 
         res.json({ msg: "Logged out" })
     } catch (error) {
         res.status(400).json({ msg: error })
+    }
+}
+
+const register = async (req, res) => {
+    try {
+        const { name, email, password } = req.body
+
+        if (!name || !email || !password) {
+            return res.status(400).json({ msg: "All fields are required!" })
+        }
+
+        const existingEmail = await User.findOne({ email }).lean().exec()
+
+        if (existingEmail) {
+            return res.status(409).json({ msg: "Email is already taken" })
+        }
+
+        const hashPassword = await bcrypt.hash(password, 10)
+
+        const user = await User.create({
+            name,
+            email,
+            password: hashPassword,
+        })
+
+        if (user) {
+            // res.status(200).json({ msg: `User ${name} created!` })
+
+            const accessToken = jwt.sign(
+                {
+                    userInfo: {
+                        id: user._id,
+                        email: user.email,
+                        name: user.name,
+                        role: user.role,
+                    },
+                },
+                process.env.ACCESS_TOKEN_SECRET,
+                {
+                    expiresIn: "1d",
+                }
+            )
+            const refreshToken = jwt.sign(
+                {
+                    id: user._id,
+                    email: user.email,
+                    name: user.name,
+                    role: user.role,
+                },
+                process.env.REFRESH_TOKEN_SECRET,
+                {
+                    expiresIn: "7d",
+                }
+            )
+            res.cookie("jwt", refreshToken, {
+                httpOnly: true,
+                secure: true,
+                sameSite: "None",
+                maxAge: 7 * 24 * 60 * 60 * 1000,
+            })
+
+            res.json({ accessToken })
+        } else {
+            res.status(400).json({ msg: "Unable to create new user" })
+        }
+    } catch (error) {
+        res.status(400).json({ msg: "Unable to create new user" })
     }
 }
 
@@ -105,29 +180,25 @@ const refresh = async (req, res) => {
 
                 const accessToken = jwt.sign(
                     {
-                        'userInfo': {
+                        userInfo: {
                             id: foundUser._id,
                             email: foundUser.email,
                             name: foundUser.name,
-                            role: foundUser.role
-                        }
+                            role: foundUser.role,
+                        },
                     },
                     process.env.ACCESS_TOKEN_SECRET,
                     {
-                        expiresIn: "10s"
+                        expiresIn: "1d",
                     }
                 )
 
                 res.json({ accessToken })
-            })
-
+            }
+        )
     } catch (error) {
         res.status(400).json({ msg: error })
     }
 }
 
-export {
-    login,
-    logout,
-    refresh
-}
+export { login, logout, register, refresh }
