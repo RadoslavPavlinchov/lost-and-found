@@ -1,14 +1,15 @@
-import Admin from "../components/pages/admin/Admin";
-import AdminUsers from "../components/pages/admin/AdminUsers";
-import AdminItems from "../components/pages/admin/AdminItems";
-import Login from "../components/pages/auth/Login";
-import Register from "../components/pages/auth/Register";
-import Home from "../components/pages/home/Home";
-import Items from "../components/pages/items/Items";
-import ItemDetails from "../components/pages/items/ItemDetails";
-import NotFound from "../components/pages/notFound/NotFound";
-import AdminEditUser from "../components/pages/admin/AdminEditUser";
-import AdminCreateUser from "../components/pages/admin/AdminCreateUser";
+import Admin from "../components/pages/admin/Admin"
+import AdminUsers from "../components/pages/admin/AdminUsers"
+import AdminItems from "../components/pages/admin/AdminItems"
+import Login from "../components/pages/auth/Login"
+import Register from "../components/pages/auth/Register"
+import Home from "../components/pages/home/Home"
+import Items from "../components/pages/items/Items"
+import ItemDetails from "../components/pages/items/ItemDetails"
+import NotFound from "../components/pages/notFound/NotFound"
+import AdminEditUser from "../components/pages/admin/AdminEditUser"
+import AdminCreateUser from "../components/pages/admin/AdminCreateUser"
+import Profile from "../components/pages/profile/Profile"
 
 // To-Do: add aditional property called "additionalProps" or "props" if needed
 
@@ -21,12 +22,12 @@ const routesConfig = [
     {
         key: "items",
         element: Items,
-        path: "items"
+        path: "items",
     },
     {
         key: "/items/:id",
         element: ItemDetails,
-        path: "items/:id"
+        path: "items/:id",
     },
     // {
     //     element: "About Us",
@@ -60,8 +61,8 @@ const routesConfig = [
                 key: "admin-items",
                 element: AdminItems,
                 path: "items",
-            }
-        ]
+            },
+        ],
     },
     {
         key: "register",
@@ -74,11 +75,15 @@ const routesConfig = [
         path: "login",
     },
     {
+        key: "profile",
+        element: Profile,
+        path: "profile",
+    },
+    {
         key: "not-found",
         element: NotFound,
-        path: "*"
+        path: "*",
     },
+]
 
-];
-
-export default routesConfig;
+export default routesConfig
