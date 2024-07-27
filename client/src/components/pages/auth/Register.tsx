@@ -1,33 +1,129 @@
-import { FormEvent } from 'react';
-import styles from './Auth.module.css';
+import { useEffect, useRef, useState } from "react"
+import { useDispatch } from "react-redux"
+import { Link, useNavigate } from "react-router-dom"
+import { useRegisterMutation } from "../../../app/api/authApiSlice"
+import { setCredentials } from "../../../app/api/authSlice"
 
 export default function Register() {
-    const baseUrl = "http://localhost:3000/api/"
+    const nameRef = useRef()
+    const errorRef = useRef()
 
-    const onRegisterHandler = async (e: FormEvent<HTMLFormElement>) => {
+    const [formData, setFormData] = useState({
+        name: "",
+        email: "",
+        password: "",
+    })
+    const [errorMsg, setErrorMsg] = useState("")
+
+    const navigate = useNavigate()
+    const dispatch = useDispatch()
+
+    const [register, { isLoading }] = useRegisterMutation()
+
+    useEffect(() => {
+        nameRef.current.focus()
+    }, [])
+
+    useEffect(() => {
+        setErrorMsg("")
+    }, [formData])
+
+    const handleSubmit = async (e) => {
         e.preventDefault()
 
-        const formData = new FormData(e.currentTarget)
-        const userData = Object.fromEntries(formData)
+        try {
+            const { accessToken } = await register(formData).unwrap()
 
-        await fetch(`${baseUrl}users`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(userData)
+            dispatch(setCredentials({ accessToken }))
+
+            setFormData({
+                name: "",
+                email: "",
+                password: "",
+            })
+
+            navigate("/")
+        } catch (error) {
+            if (!error.status) {
+                return setErrorMsg("Network error")
+            }
+
+            if (error.status === 400) {
+                return setErrorMsg("Invalid credentials")
+            }
+
+            if (error.status === 401) {
+                return setErrorMsg("Unauthorized")
+            }
+
+            setErrorMsg(error.data?.message)
+
+            errorRef.current.focus()
+        }
+    }
+
+    const handleChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value,
         })
     }
 
+    if (isLoading) return <div>Loading...</div>
+
     return (
-        <div className={styles.auth}>
-            <h2>Register</h2>
-            <form onSubmit={onRegisterHandler}>
-                <input type="text" placeholder="Name" name="name" required />
-                <input type="email" placeholder="Email" name="email" required />
-                <input type="password" placeholder="Password" name="password" required />
-                <button type="submit">Register</button>
+        <div className="max-w-md mx-auto">
+            <p ref={errorRef}>{errorMsg}</p>
+
+            <h2 className="text-center my-7">Register</h2>
+
+            <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+                <input
+                    className="border rounded-xl p-2"
+                    type="text"
+                    id="name"
+                    name="name"
+                    placeholder="Name"
+                    ref={nameRef}
+                    required
+                    onChange={handleChange}
+                    value={formData.name}
+                />
+                <input
+                    className="border rounded-xl p-2"
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="Email"
+                    required
+                    onChange={handleChange}
+                    value={formData.email}
+                />
+                <input
+                    className="border rounded-xl  p-2 "
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Password"
+                    required
+                    onChange={handleChange}
+                    value={formData.password}
+                />
+
+                <button
+                    className="bg-blue text-white rounded-xl p-2"
+                    type="submit"
+                >
+                    Register
+                </button>
             </form>
+
+            <div className="flex justify-center gap-2 p-2 mt-4">
+                <p>Already have an account?</p>
+                <Link to="/login">
+                    <span className="text-blue">Login</span>
+                </Link>
+            </div>
         </div>
-    );
+    )
 }
