@@ -1,8 +1,8 @@
 import { Routes, Route, BrowserRouter } from "react-router-dom"
-import routesConfig from "./configs/routesConfig"
-import Layout from "./components/layout/Layout"
 import { Provider } from "react-redux"
 import { store } from "./app/store"
+import Layout from "./components/layout/Layout"
+import routesConfig from "./configs/routesConfig"
 
 function createRoutes(routesConfig) {
     return routesConfig.map((route) => {
