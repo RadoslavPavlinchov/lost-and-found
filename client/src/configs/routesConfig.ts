@@ -10,6 +10,9 @@ import NotFound from "../components/pages/notFound/NotFound"
 import AdminEditUser from "../components/pages/admin/AdminEditUser"
 import AdminCreateUser from "../components/pages/admin/AdminCreateUser"
 import Profile from "../components/pages/profile/Profile"
+import AboutUs from "../components/pages/aboutUs/AboutUs"
+import Contacts from "../components/pages/contacts/Contacts"
+import Dashboard from "../components/pages/dashboard/Dashboard"
 
 // To-Do: add aditional property called "additionalProps" or "props" if needed
 
@@ -29,14 +32,16 @@ const routesConfig = [
         element: ItemDetails,
         path: "items/:id",
     },
-    // {
-    //     element: "About Us",
-    //     path: "/about"
-    // },
-    // {
-    //     element: "Contacts",
-    //     path: "/contacts"
-    // },
+    {
+        key: "aboutUs",
+        element: AboutUs,
+        path: "aboutUs",
+    },
+    {
+        key: "contacts",
+        element: Contacts,
+        path: "contacts",
+    },
     {
         key: "admin",
         element: Admin,
@@ -75,9 +80,16 @@ const routesConfig = [
         path: "login",
     },
     {
-        key: "profile",
-        element: Profile,
-        path: "profile",
+        key: "dashboard",
+        element: Dashboard,
+        path: "dashboard",
+        children: [
+            {
+                key: "profile",
+                element: Profile,
+                path: "profile",
+            },
+        ],
     },
     {
         key: "not-found",

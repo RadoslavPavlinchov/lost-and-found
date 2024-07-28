@@ -18,9 +18,9 @@ const navigationConfig = [
     },
     {
         text: "About Us",
-        to: "/about",
+        to: "/aboutUs",
         visibility: {
-            private: ["user"],
+            private: [],
             public: true,
         },
     },
@@ -28,7 +28,7 @@ const navigationConfig = [
         text: "Contacts",
         to: "/contacts",
         visibility: {
-            private: ["user"],
+            private: [],
             public: true,
         },
     },
