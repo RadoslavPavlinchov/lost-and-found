@@ -12,7 +12,12 @@ export default function Profile() {
     const [file, setFile] = useState<File | null>(null)
     const [uploadProgress, setUploadProgress] = useState(0)
     const [uploadError, setUploadError] = useState(false)
-    const [formData, setFormData] = useState({})
+    const [formData, setFormData] = useState({
+        name: "",
+        email: "",
+        password: "",
+        avatar: "",
+    })
     const fileRef = useRef<HTMLInputElement>(null)
     const { name, email, password } = useAuth()
 
@@ -22,7 +27,7 @@ export default function Profile() {
     useEffect(() => {
         if (file) {
             handleFileUpload(file)
-            setFile(null)
+            // setFile(null)
         }
     }, [file])
 
@@ -54,10 +59,11 @@ export default function Profile() {
                 console.log("Error uploading file", error)
                 setUploadError(true)
             },
-            () => {
-                getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                    setFormData({ ...formData, avatar: downloadURL })
-                })
+            async () => {
+                const downloadURL = await getDownloadURL(
+                    uploadTask.snapshot.ref
+                )
+                setFormData({ ...formData, avatar: downloadURL })
             }
         )
     }
@@ -68,6 +74,22 @@ export default function Profile() {
 
     const changeFileHandler = (e) => {
         setFile(e.target.files?.[0])
+    }
+
+    const uploadProgressElement = () => {
+        if (uploadError) {
+            return <span className="text-red-700">Image upload failed</span>
+        }
+
+        if (uploadProgress > 0 && uploadProgress < 100) {
+            return <span>Uploading {uploadProgress}%</span>
+        }
+
+        if (uploadProgress === 100) {
+            return <span className="text-green">Done!</span>
+        }
+
+        return null
     }
 
     return (
@@ -85,24 +107,15 @@ export default function Profile() {
 
                 <img
                     alt="dashboard"
-                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                    src={
+                        formData.avatar ||
+                        "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                    }
                     className="h-36 w-36 rounded-full ring-2 ring-white object-cover cursor-pointer self-center mt-2"
                     onClick={clickHandler}
                 />
 
-                <p className="text-center">
-                    {uploadError ? (
-                        <span className="text-red-700">
-                            Image upload failed
-                        </span>
-                    ) : uploadProgress > 0 && uploadProgress < 100 ? (
-                        <span className="text-green">
-                            Uploading {uploadProgress}
-                        </span>
-                    ) : (
-                        <span className="text-green">Done!</span>
-                    )}
-                </p>
+                <p className="text-center">{uploadProgressElement()}</p>
 
                 <input
                     type="text"
