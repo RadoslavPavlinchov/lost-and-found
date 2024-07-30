@@ -7,22 +7,38 @@ import {
 } from "firebase/storage"
 import useAuth from "../../../customHooks/useAuth"
 import { app } from "../../../firebase"
+import { useUpdateUserMutation } from "../../../app/api/usersApiSlice"
 
 export default function Profile() {
+    const { name, role, email, id, isAdmin } = useAuth()
     const [file, setFile] = useState<File | null>(null)
     const [uploadProgress, setUploadProgress] = useState(0)
     const [uploadError, setUploadError] = useState(false)
     const [formData, setFormData] = useState({
-        name: "",
-        email: "",
+        name: name || "",
+        email: email || "",
         password: "",
         avatar: "",
     })
+    const [errorMsg, setErrorMsg] = useState("")
     const fileRef = useRef<HTMLInputElement>(null)
-    const { name, email, password } = useAuth()
+    const [updateUser, { isLoading, isSuccess, isError, error }] =
+        useUpdateUserMutation()
 
-    console.log("file is", file)
-    console.log("form data is", formData)
+    useEffect(() => {
+        if (isSuccess) {
+            setFormData({
+                name: name || "",
+                email: email || "",
+                password: "",
+                avatar: "",
+            })
+        }
+    }, [isSuccess])
+
+    // console.log("file is", file)
+    // console.log("form data is", formData)
+    console.log("useAuth", name, role, email, id, isAdmin)
 
     useEffect(() => {
         if (file) {
@@ -76,6 +92,13 @@ export default function Profile() {
         setFile(e.target.files?.[0])
     }
 
+    const handleInputChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value,
+        })
+    }
+
     const uploadProgressElement = () => {
         if (uploadError) {
             return <span className="text-red-700">Image upload failed</span>
@@ -92,11 +115,62 @@ export default function Profile() {
         return null
     }
 
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+
+        try {
+            // const { accessToken } = await login(formData).unwrap()
+            // dispatch(setCredentials({ accessToken }))
+            // setFormData({
+            //     email: "",
+            //     password: "",
+            // })
+            // navigate("/")
+
+            if (formData.password) {
+                const res = await updateUser({
+                    // id: user.id,
+                    name: formData.name,
+                    email: formData.email,
+                    password: formData.password,
+                    // role,
+                }).unwrap()
+
+                console.log("res in profile 1", res)
+            } else {
+                const res = await updateUser({
+                    name: formData.name,
+                    email: formData.email,
+                }).unwrap()
+
+                console.log("res in profile 2", res)
+            }
+        } catch (error) {
+            if (!error.status) {
+                return setErrorMsg("Network error")
+            }
+
+            if (error.status === 400) {
+                return setErrorMsg("Invalid credentials")
+            }
+
+            if (error.status === 401) {
+                return setErrorMsg("Unauthorized")
+            }
+
+            setErrorMsg(error.data?.message)
+
+            // errorRef.current.focus()
+        }
+    }
+
     return (
         <div className="max-w-md mx-auto">
             <h2 className="text-center my-7">Profile</h2>
 
-            <form className="flex flex-col gap-4">
+            <p>{errorMsg}</p>
+
+            <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
                 <input
                     type="file"
                     ref={fileRef}
@@ -118,22 +192,28 @@ export default function Profile() {
                 <p className="text-center">{uploadProgressElement()}</p>
 
                 <input
+                    className="border rounded-xl p-2"
                     type="text"
                     name="name"
                     placeholder="Name"
-                    className="border rounded-xl p-2"
+                    value={formData.name}
+                    onChange={handleInputChange}
                 />
                 <input
+                    className="border rounded-xl p-2"
                     type="email"
                     name="email"
                     placeholder="Email"
-                    className="border rounded-xl p-2"
+                    value={formData.email}
+                    onChange={handleInputChange}
                 />
                 <input
+                    className="border rounded-xl p-2"
                     type="password"
                     name="password"
                     placeholder="Password"
-                    className="border rounded-xl p-2"
+                    value={formData.password}
+                    onChange={handleInputChange}
                 />
 
                 <button className="bg-blue text-white p-2 rounded">
