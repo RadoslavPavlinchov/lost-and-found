@@ -1,15 +1,19 @@
-import express from 'express';
-import { createUser, deleteUser, getAllUsers, getUser, updateUser } from "../controllers/userController.js";
-import verifyJWT from '../middleware/verifyJWT.js';
+import express from "express"
+import {
+    getUser,
+    createUser,
+    updateUser,
+    deleteUser,
+} from "../controllers/userController.js"
+import verifyJWT from "../middleware/verifyJWT.js"
 
-const router = express.Router();
+const router = express.Router()
 
-router.use(verifyJWT);
+router.use(verifyJWT)
 
-router.get("/", getAllUsers);
-router.get("/:id", getUser);
-router.post("/", createUser);
-router.patch("/:id", updateUser);
-router.delete("/", deleteUser);
+router.get("/:id", getUser)
+router.post("/", createUser)
+router.patch("/", updateUser)
+router.delete("/", deleteUser)
 
-export default router; 
+export default router

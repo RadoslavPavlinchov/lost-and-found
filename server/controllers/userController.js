@@ -1,25 +1,12 @@
-import mongoose from "mongoose";
-import bcrypt from "bcrypt";
-import User from "../models/User.js";
-import Item from "../models/Item.js";
-
-const getAllUsers = async (req, res) => {
-    try {
-        const users = await User.find().select("-password").lean();
-
-        if (!users?.length) {
-            return res.status(400).json({ msg: "No users available" })
-        }
-
-        res.status(200).json(users)
-    } catch (error) {
-        res.status(400).json({ msg: error })
-    }
-}
+import jwt from "jsonwebtoken"
+import mongoose from "mongoose"
+import bcrypt from "bcrypt"
+import User from "../models/User.js"
+import Item from "../models/Item.js"
 
 const getUser = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { id } = req.params
 
         if (!id) {
             return res.status(400).json({ msg: "ID is required" })
@@ -29,14 +16,13 @@ const getUser = async (req, res) => {
             return res.status(404).json({ msg: "Invalid ID", id })
         }
 
-        const user = await User.findById(id).select("-password").exec();
+        const user = await User.findById(id).select("-password").exec()
 
         if (!user) {
             return res.status(404).json({ msg: "No such user", id })
         }
 
-        res.status(200).json(user);
-
+        res.status(200).json(user)
     } catch (error) {
         res.status(404).json({ msg: error })
     }
@@ -44,7 +30,7 @@ const getUser = async (req, res) => {
 
 const createUser = async (req, res) => {
     try {
-        const { name, email, password, role } = req.body;
+        const { name, email, password, role } = req.body
 
         if (!name || !email || !password || !role) {
             return res.status(400).json({ msg: "All fields are required!" })
@@ -63,14 +49,13 @@ const createUser = async (req, res) => {
             email,
             role,
             password: hashPassword,
-        });
+        })
 
         if (user) {
             res.status(200).json({ msg: `User ${name} created!` })
         } else {
             res.status(400).json({ msg: "Unable to create new user" })
         }
-
     } catch (error) {
         res.status(400).json({ msg: error.message })
     }
@@ -78,86 +63,115 @@ const createUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
     try {
-        const { id, name, email, password, role } = req.body;
+        const { name, email, password } = req.body
 
-        if (!id || !name || !email || !password || !role) {
-            return res.status(400).json({ msg: `All fields are required!` })
+        if (!mongoose.Types.ObjectId.isValid(req.id)) {
+            return res.status(404).json({ msg: "Invalid ID", id: req.id })
         }
-
-        if (!mongoose.Types.ObjectId.isValid(id)) {
-            return res.status(404).json({ msg: "Invalid ID", id })
-        }
-
-        const user = await User.findById({ _id: id }).exec();
-
-        if (!user) {
-            return res.status(404).json({ msg: "No such user", id });
-        }
-
-        const existingEmail = await User.findOne({ email }).lean().exec()
-
-        if (existingEmail && existingEmail?._id.toString() !== id) {
-            return res.status(409).json({ msg: "User with such email already exist!" })
-        }
-
-        user.name = name
-        user.role = role
-        user.email = email
 
         if (password) {
-            user.password = await bcrypt.hash(password, 10)
+            req.body.password = await bcrypt.hash(password, 10)
         }
 
-        const updatedUser = await user.save();
+        const updatedUser = await User.findByIdAndUpdate(
+            req.id,
+            {
+                $set: {
+                    name: name,
+                    email: email,
+                    password: req.body.password,
+                    avatar: req.body.avatar,
+                },
+            },
+            {
+                new: true,
+            }
+        )
 
-        res.status(200).json({ msg: `User ${updatedUser.name} updated` });
-    } catch {
-        if (!mongoose.Types.ObjectId.isValid(id)) {
-            return res.status(404).json({ msg: "Incorrect ID", id });
+        const { password: pass, ...rest } = updatedUser._doc
+
+        const accessToken = jwt.sign(
+            {
+                userInfo: {
+                    id: rest._id,
+                    email: rest.email,
+                    name: rest.name,
+                    role: rest.role,
+                },
+            },
+            process.env.ACCESS_TOKEN_SECRET,
+            {
+                expiresIn: "1d",
+            }
+        )
+        const refreshToken = jwt.sign(
+            {
+                id: rest._id,
+                email: rest.email,
+                name: rest.name,
+                role: rest.role,
+            },
+            process.env.REFRESH_TOKEN_SECRET,
+            {
+                expiresIn: "7d",
+            }
+        )
+        res.cookie("jwt", refreshToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "None",
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+        })
+
+        res.json({ accessToken })
+    } catch (error) {
+        if (!mongoose.Types.ObjectId.isValid(req.id)) {
+            return res.status(404).json({ msg: "Incorrect ID", id: req.id })
         }
-
-        res.status(404).json({ error });
+        res.status(404).json({ error })
     }
 }
 
 const deleteUser = async (req, res) => {
     try {
-        const { id } = req.body;
+        const id = req.id
 
         if (!id) {
-            return res.status(400).json({ msg: "User ID is required" });
+            return res.status(400).json({ msg: "User ID is required" })
         }
 
         if (!mongoose.Types.ObjectId.isValid(id)) {
             return res.status(400).json({ msg: "Invalid ID", id })
         }
 
-        // To-Do: make sure that by deleting the user, items don't brake the logic
-        const items = await Item.findOne({ user: id }).lean().exec();
+        const items = await Item.findOne({ user: id }).lean().exec()
 
         if (items?.length) {
-            return res.status(400).json({ msg: "User has items that are still active" })
+            return res
+                .status(400)
+                .json({ msg: "User has items that are still active" })
         }
 
-        const user = await User.findById({ _id: id }).exec();
+        const user = await User.findById({ _id: id }).exec()
 
         if (!user) {
-            return res.status(404).json({ msg: "No such user", id });
+            return res.status(404).json({ msg: "No such user", id })
         }
 
-        await user.deleteOne();
+        await user.deleteOne()
 
-        res.json({ msg: `User with ${id} was deleted` });
+        res.clearCookie("jwt", {
+            httpOnly: true,
+            secure: true,
+            sameSite: "None",
+        })
 
+        res.json({ msg: `User with ${id} was deleted` })
     } catch (error) {
-        res.status(500).json({ msg: "An error occurred while deleting the user" });
+        res.status(500).json({
+            msg: "An error occurred while deleting the user",
+        })
     }
 }
 
-export {
-    getAllUsers,
-    getUser,
-    createUser,
-    updateUser,
-    deleteUser
-}
+export { getUser, createUser, updateUser, deleteUser }
