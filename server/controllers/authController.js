@@ -89,9 +89,9 @@ const logout = async (req, res) => {
 
 const register = async (req, res) => {
     try {
-        const { name, email, password } = req.body
+        const { name, email, password, role = "user" } = req.body
 
-        if (!name || !email || !password) {
+        if (!name || !email || !password || !role) {
             return res.status(400).json({ msg: "All fields are required!" })
         }
 
@@ -106,6 +106,7 @@ const register = async (req, res) => {
         const user = await User.create({
             name,
             email,
+            role,
             password: hashPassword,
         })
 
