@@ -1,43 +1,50 @@
-import mongoose from "mongoose";
+import mongoose from "mongoose"
 
-const Schema = mongoose.Schema;
+const Schema = mongoose.Schema
 
-const ItemSchema = new Schema({
-    name: {
-        type: String,
-        required: true
+const ItemSchema = new Schema(
+    {
+        name: {
+            type: String,
+            required: true,
+        },
+        description: {
+            type: String,
+            required: true,
+        },
+        // dateOfEvent: {
+        //     type: Date,
+        //     required: true,
+        // },
+        location: {
+            type: String,
+            required: true,
+        },
+        status: {
+            type: String,
+            enum: ["lost", "found"],
+            required: true,
+        },
+        category: {
+            type: String,
+            required: true,
+        },
+        // user: {
+        //     type: Schema.Types.ObjectId,
+        //     ref: 'User',
+        //     required: true
+        // },
+        userRef: {
+            type: String,
+            // ref: 'User',
+            required: true,
+        },
+        imageUrls: {
+            type: Array,
+            required: false,
+        },
     },
-    description: {
-        type: String,
-        required: true
-    },
-    dateLostOrFound: {
-        type: Date,
-        required: true
-    },
-    location: {
-        type: String,
-        required: true
-    },
-    status: {
-        type: String,
-        enum: ['lost', 'found'],
-        required: true
-    },
-    category: {
-        type: String,
-        required: true
-    },
-    user: {
-        type: Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
-    },
-    imageUrl: {
-        type: String,
-        required: false
-    }
+    { timestamps: true }
+)
 
-}, { timestamps: true });
-
-export default mongoose.model("Item", ItemSchema);
+export default mongoose.model("Item", ItemSchema)
