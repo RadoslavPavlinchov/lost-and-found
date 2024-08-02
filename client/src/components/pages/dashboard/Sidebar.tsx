@@ -47,7 +47,7 @@ export default function Sidebar() {
                     Add New Item
                 </Link>
                 <Link
-                    to="/dashboard/profile"
+                    to="/dashboard/my-items"
                     className="py-2 hover:bg-gray-700"
                 >
                     My Items

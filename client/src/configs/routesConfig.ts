@@ -14,6 +14,7 @@ import AboutUs from "../components/pages/aboutUs/AboutUs"
 import Contacts from "../components/pages/contacts/Contacts"
 import Dashboard from "../components/pages/dashboard/Dashboard"
 import CreateItem from "../components/pages/items/CreateItem"
+import MyItems from "../components/pages/items/MyItems"
 
 // To-Do: add aditional property called "additionalProps" or "props" if needed
 
@@ -86,14 +87,19 @@ const routesConfig = [
         path: "dashboard",
         children: [
             {
+                key: "profile",
+                element: Profile,
+                path: "profile",
+            },
+            {
                 key: "create-item",
                 element: CreateItem,
                 path: "create-item",
             },
             {
-                key: "profile",
-                element: Profile,
-                path: "profile",
+                key: "my-items",
+                element: MyItems,
+                path: "my-items",
             },
         ],
     },

@@ -8,9 +8,10 @@ export const usersApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
         getUsers: builder.query({
             query: () => "users",
-            validateStatus: (response, result) => response.status === 200 && !result.error,
+            validateStatus: (response, result) =>
+                response.status === 200 && !result.error,
             transformResponse: (responseData) => {
-                const loadedUsers = responseData.map(user => {
+                const loadedUsers = responseData.map((user) => {
                     user.id = user._id
 
                     return user
@@ -19,52 +20,59 @@ export const usersApiSlice = apiSlice.injectEndpoints({
                 return userAdapter.setAll(initialState, loadedUsers)
             },
             providesTags: (result, error, arg) => {
-
                 if (result?.ids) {
                     return [
                         { type: "User", id: "LIST" },
-                        ...result.ids.map((id) => ({ type: "User", id }))
+                        ...result.ids.map((id) => ({ type: "User", id })),
                     ]
                 } else {
                     return [{ type: "User", id: "LIST" }]
                 }
-            }
+            },
+        }),
+        getUserItems: builder.query({
+            query: () => "users/items",
         }),
         addNewUser: builder.mutation({
             query: (initialUserData) => ({
                 url: "users",
                 method: "POST",
                 body: {
-                    ...initialUserData
-                }
+                    ...initialUserData,
+                },
             }),
-            invalidatesTags: [{ type: "User", id: "LIST" }]
+            invalidatesTags: [{ type: "User", id: "LIST" }],
         }),
         updateUser: builder.mutation({
             query: (initialUserData) => ({
                 url: "users",
                 method: "PATCH",
                 body: {
-                    ...initialUserData
-                }
+                    ...initialUserData,
+                },
             }),
-            invalidatesTags: (result, error, { userId }) => [{ type: "User", id: userId }]
+            invalidatesTags: (result, error, { userId }) => [
+                { type: "User", id: userId },
+            ],
         }),
         deleteUser: builder.mutation({
             query: ({ userId }) => ({
                 url: `users`,
                 method: "DELETE",
                 body: {
-                    userId
-                }
+                    userId,
+                },
             }),
-            invalidatesTags: (result, error, userId) => [{ type: "User", id: userId }]
-        })
+            invalidatesTags: (result, error, userId) => [
+                { type: "User", id: userId },
+            ],
+        }),
     }),
 })
 
 export const {
     useGetUsersQuery,
+    useGetUserItemsQuery,
     useAddNewUserMutation,
     useUpdateUserMutation,
     useDeleteUserMutation,
@@ -80,5 +88,5 @@ const selectUsersData = createSelector(
 export const {
     selectAll: selectAllUsers,
     selectById: selectUserById,
-    selectIds: selectUserIds
+    selectIds: selectUserIds,
 } = userAdapter.getSelectors((state) => selectUsersData(state) ?? initialState)
