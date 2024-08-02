@@ -1,17 +1,24 @@
 import { useEffect, useRef, useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { useDispatch } from "react-redux"
 import {
     getDownloadURL,
     getStorage,
     ref,
     uploadBytesResumable,
 } from "firebase/storage"
-import useAuth from "../../../customHooks/useAuth"
 import { app } from "../../../firebase"
-import { useUpdateUserMutation } from "../../../app/api/usersApiSlice"
+import useAuth from "../../../customHooks/useAuth"
+import {
+    useDeleteUserMutation,
+    useUpdateUserMutation,
+} from "../../../app/api/usersApiSlice"
+import { setCredentials, logout as setLogout } from "../../../app/api/authSlice"
 
 export default function Profile() {
-    const { name, role, email, id, isAdmin } = useAuth()
+    const { name, email, id } = useAuth()
     const [file, setFile] = useState<File | null>(null)
+    const fileRef = useRef<HTMLInputElement>(null)
     const [uploadProgress, setUploadProgress] = useState(0)
     const [uploadError, setUploadError] = useState(false)
     const [formData, setFormData] = useState({
@@ -21,9 +28,13 @@ export default function Profile() {
         avatar: "",
     })
     const [errorMsg, setErrorMsg] = useState("")
-    const fileRef = useRef<HTMLInputElement>(null)
-    const [updateUser, { isLoading, isSuccess, isError, error }] =
-        useUpdateUserMutation()
+
+    const navigate = useNavigate()
+    const dispatch = useDispatch()
+
+    const [deleteUser, options] = useDeleteUserMutation()
+
+    const [updateUser, { isLoading, isSuccess }] = useUpdateUserMutation()
 
     useEffect(() => {
         if (isSuccess) {
@@ -34,11 +45,7 @@ export default function Profile() {
                 avatar: "",
             })
         }
-    }, [isSuccess])
-
-    // console.log("file is", file)
-    // console.log("form data is", formData)
-    console.log("useAuth", name, role, email, id, isAdmin)
+    }, [name, email, isSuccess])
 
     useEffect(() => {
         if (file) {
@@ -71,8 +78,7 @@ export default function Profile() {
                         break
                 }
             },
-            (error) => {
-                console.log("Error uploading file", error)
+            () => {
                 setUploadError(true)
             },
             async () => {
@@ -115,36 +121,37 @@ export default function Profile() {
         return null
     }
 
+    const handleDelete = async () => {
+        try {
+            await deleteUser(id)
+
+            console.log("User deleted", options)
+
+            dispatch(setLogout())
+
+            navigate("/")
+        } catch (error) {
+            console.error("Error logging out", error)
+        }
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault()
 
         try {
-            // const { accessToken } = await login(formData).unwrap()
-            // dispatch(setCredentials({ accessToken }))
-            // setFormData({
-            //     email: "",
-            //     password: "",
-            // })
-            // navigate("/")
+            const data = {
+                name: formData.name,
+                email: formData.email,
+                avatar: formData.avatar,
+            }
 
             if (formData.password) {
-                const res = await updateUser({
-                    // id: user.id,
-                    name: formData.name,
-                    email: formData.email,
-                    password: formData.password,
-                    // role,
-                }).unwrap()
-
-                console.log("res in profile 1", res)
-            } else {
-                const res = await updateUser({
-                    name: formData.name,
-                    email: formData.email,
-                }).unwrap()
-
-                console.log("res in profile 2", res)
+                data.password = formData.password
             }
+
+            const { accessToken } = await updateUser(data).unwrap()
+
+            dispatch(setCredentials({ accessToken }))
         } catch (error) {
             if (!error.status) {
                 return setErrorMsg("Network error")
@@ -159,8 +166,6 @@ export default function Profile() {
             }
 
             setErrorMsg(error.data?.message)
-
-            // errorRef.current.focus()
         }
     }
 
@@ -169,6 +174,7 @@ export default function Profile() {
             <h2 className="text-center my-7">Profile</h2>
 
             <p>{errorMsg}</p>
+            <p className="text-green">{isSuccess && "Update successful"}</p>
 
             <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
                 <input
@@ -216,13 +222,19 @@ export default function Profile() {
                     onChange={handleInputChange}
                 />
 
-                <button className="bg-blue text-white p-2 rounded">
-                    Update
+                <button
+                    disabled={isLoading}
+                    className="bg-blue text-white p-2 rounded"
+                >
+                    {isLoading ? "Loading..." : "Update"}
                 </button>
             </form>
 
             <div className="text-center mt-5">
-                <span className="cursor-pointer text-red-700">
+                <span
+                    onClick={handleDelete}
+                    className="cursor-pointer text-red-700"
+                >
                     Delete Profile
                 </span>
             </div>
