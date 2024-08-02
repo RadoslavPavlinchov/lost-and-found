@@ -32,7 +32,7 @@ export default function Sidebar() {
     if (isError) return <div>Error: {error.data?.message}</div>
 
     return (
-        <div className="flex flex-col w-64 h-screen bg-blue text-white">
+        <div className="flex flex-col w-64 bg-blue text-white">
             <div className="flex flex-col p-4">
                 <Link
                     to="/dashboard/profile"
@@ -40,7 +40,10 @@ export default function Sidebar() {
                 >
                     Profile
                 </Link>
-                <Link to="/dashboard/create-item" className="py-2 hover:bg-gray-700">
+                <Link
+                    to="/dashboard/create-item"
+                    className="py-2 hover:bg-gray-700"
+                >
                     Add New Item
                 </Link>
                 <Link
