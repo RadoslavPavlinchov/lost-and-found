@@ -36,7 +36,7 @@ const ItemSchema = new Schema(
         // },
         userRef: {
             type: String,
-            // ref: 'User',
+            ref: 'User',
             required: true,
         },
         imageUrls: {
