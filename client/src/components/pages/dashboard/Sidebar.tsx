@@ -40,16 +40,16 @@ export default function Sidebar() {
                 >
                     Profile
                 </Link>
-                <Link to="/dashboard/items" className="py-2 hover:bg-gray-700">
-                    Add Item
+                <Link to="/dashboard/create-item" className="py-2 hover:bg-gray-700">
+                    Add New Item
                 </Link>
                 <Link
                     to="/dashboard/profile"
                     className="py-2 hover:bg-gray-700"
                 >
-                    All Items
+                    My Items
                 </Link>
-                <Link
+                {/* <Link
                     to="/dashboard/profile"
                     className="py-2 hover:bg-gray-700"
                 >
@@ -60,7 +60,7 @@ export default function Sidebar() {
                     className="py-2 hover:bg-gray-700"
                 >
                     Lost Items
-                </Link>
+                </Link> */}
                 <Link
                     to="/"
                     className="py-2 hover:bg-gray-700"
