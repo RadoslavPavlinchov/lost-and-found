@@ -11,7 +11,7 @@ const useAuth = () => {
         const decodedToken = jwtDecode(token)
         const { name, role, email, id } = decodedToken.userInfo
 
-        isAdmin = decodedToken.role === "admin"
+        isAdmin = role === "admin"
 
         return {
             name,
@@ -31,4 +31,4 @@ const useAuth = () => {
     }
 }
 
-export default useAuth 
+export default useAuth
