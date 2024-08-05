@@ -1,7 +1,6 @@
 import express from "express"
 import {
     getUser,
-    getUserItems,
     createUser,
     updateUser,
     deleteUser,
@@ -12,7 +11,6 @@ const router = express.Router()
 
 router.use(verifyJWT)
 
-router.get("/items", getUserItems)
 router.get("/:id", getUser)
 router.post("/", createUser)
 router.patch("/", updateUser)

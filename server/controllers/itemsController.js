@@ -11,6 +11,30 @@ const getAllItems = async (req, res) => {
     }
 }
 
+const getUserItems = async (req, res) => {
+    try {
+        const id = req.params.id
+
+        if (!id) {
+            return res.status(400).json({ msg: "ID is required" })
+        }
+
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(404).json({ msg: "Invalid ID", id })
+        }
+
+        const items = await Item.find({ userRef: id }).lean().exec()
+
+        if (!items) {
+            return res.status(404).json({ msg: "No items found", id })
+        }
+
+        res.status(200).json(items)
+    } catch (error) {
+        res.status(404).json({ msg: error })
+    }
+}
+
 const getItem = async (req, res) => {
     const { id } = req.params
 
@@ -91,6 +115,10 @@ const deleteItem = async (req, res) => {
     const { id } = req.params
 
     try {
+        // Two cases:
+        // 1. The current user is admin and can delete all items
+        // 2. The current user is the owner of the item and can delete only their items
+
         const item = await Item.findOneAndDelete({ _id: id })
 
         if (!item) {
@@ -107,4 +135,11 @@ const deleteItem = async (req, res) => {
     }
 }
 
-export { getAllItems, getItem, createItem, updateItem, deleteItem }
+export {
+    getAllItems,
+    getUserItems,
+    getItem,
+    createItem,
+    updateItem,
+    deleteItem,
+}

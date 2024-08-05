@@ -28,30 +28,6 @@ const getUser = async (req, res) => {
     }
 }
 
-const getUserItems = async (req, res) => {
-    try {
-        const id = req.id
-
-        if (!id) {
-            return res.status(400).json({ msg: "ID is required" })
-        }
-
-        if (!mongoose.Types.ObjectId.isValid(id)) {
-            return res.status(404).json({ msg: "Invalid ID", id })
-        }
-
-        const items = await Item.find({ userRef: id }).lean().exec()
-
-        if (!items) {
-            return res.status(404).json({ msg: "No items found", id })
-        }
-
-        res.status(200).json(items)
-    } catch (error) {
-        res.status(404).json({ msg: error })
-    }
-}
-
 const createUser = async (req, res) => {
     try {
         const { name, email, password, role } = req.body
@@ -198,4 +174,4 @@ const deleteUser = async (req, res) => {
     }
 }
 
-export { getUser, getUserItems, createUser, updateUser, deleteUser }
+export { getUser, createUser, updateUser, deleteUser }
