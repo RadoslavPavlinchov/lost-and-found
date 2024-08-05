@@ -1,27 +1,20 @@
-import { useEffect, useState } from "react";
+import { useSelector } from "react-redux"
 import styles from "./Items.module.css"
-import { Link } from "react-router-dom";
+import { selectItemIds, useGetItemsQuery } from "../../../app/api/itemsApiSlice"
+import Item from "./Item"
 
 export default function Items() {
-    // const baseUrl = import.meta.env.BASE_API_URL
-    const baseUrl = "http://localhost:3000/api/"
+    const {
+        data: items = [],
+        isLoading,
+        isSuccess,
+        isError,
+        error,
+    } = useGetItemsQuery("itemsList")
 
-    // const [filters, setFilters] = useState({});
+    const orderedItemsIds = useSelector(selectItemIds)
 
-    const [items, setItems] = useState([]);
-
-    useEffect(() => {
-        async function fetchItems() {
-            const response = await fetch(`${baseUrl}items`)
-            const items = await response.json()
-
-            setItems(items)
-        }
-
-        fetchItems();
-
-
-    }, [baseUrl]) // add "items" as dependecy
+    console.log("orderedItemsIds IDS", orderedItemsIds)
 
     // const handleFilterChange = (e) => {
     //     setFilters({ ...filters, [e.target.name]: e.target.value });
@@ -39,24 +32,32 @@ export default function Items() {
     //     });
     // };
 
-    return (
-        <div className={styles.itemsContainer}>
-            <div className={styles.filtemForm}>
-                <h2>Filter Items</h2>
-                <form>
-                    <label>
-                        Name:
-                        <input
-                            type="text"
-                            name="name"
-                        // onChange={handleFilterChange}
-                        />
-                    </label>
-                    {/* Add more filters as needed */}
-                </form>
-            </div>
-            <div className={styles.itemsGrid}>
-                {/* {
+    let content
+
+    if (isLoading) {
+        content = <div>Loading...</div>
+    }
+
+    if (isSuccess) {
+        const { ids, entities } = items
+        content = (
+            <div className={styles.itemsContainer}>
+                <div className={styles.filtemForm}>
+                    <h2>Filter Items</h2>
+                    <form>
+                        <label>
+                            Name:
+                            <input
+                                type="text"
+                                name="name"
+                                // onChange={handleFilterChange}
+                            />
+                        </label>
+                        {/* Add more filters as needed */}
+                    </form>
+                </div>
+                <div className={styles.itemsGrid}>
+                    {/* {
                     filteredItems.map((item) => (
                         <div
                             key={item.id}
@@ -67,20 +68,18 @@ export default function Items() {
                         </div>
                     ))
                 } */}
-                {
-                    items.map(item => (
-                        <Link key={item._id} to={`/items/${item._id}`}>
-                            <div
-                                key={item._id}
-                                className={styles.itemCard}
-                            // onClick={() => handleItemClick(item)}
-                            >
-                                {item.name}
-                            </div>
-                        </Link>
-                    ))
-                }
+
+                    {ids.map((itemId) => (
+                        <Item key={itemId} item={entities[itemId]} />
+                    ))}
+                </div>
             </div>
-        </div>
-    );
-};
+        )
+    }
+
+    if (isError) {
+        content = <div>Error: {error?.data.msg}</div>
+    }
+
+    return content
+}
