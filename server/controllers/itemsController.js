@@ -112,23 +112,35 @@ const updateItem = async (req, res) => {
 }
 
 const deleteItem = async (req, res) => {
-    const { id } = req.params
+    const { id: itemId } = req.params
+    const userId = req.id
+    const role = req.role
 
     try {
         // Two cases:
         // 1. The current user is admin and can delete all items
         // 2. The current user is the owner of the item and can delete only their items
 
-        const item = await Item.findOneAndDelete({ _id: id })
+        const item = await Item.findById(itemId)
 
         if (!item) {
-            return res.status(404).json({ error: "No such item", id })
+            return res.status(404).json({ error: "No such item", itemId })
         }
 
-        res.status(200).json(item)
+        if (userId !== item.userRef || role !== "admin") {
+            return res.status(403).json({ error: "Unauthorized", itemId })
+        }
+
+        // *returns info about the operation
+        const deletedRec = await item.deleteOne()
+
+        // *returns the deleted record
+        // const deletedRec = await Item.findOneAndDelete({ _id: itemId })
+
+        res.status(200).json(deletedRec)
     } catch (error) {
-        if (!mongoose.Types.ObjectId.isValid(id)) {
-            return res.status(404).json({ error: "Incorrect ID", id })
+        if (!mongoose.Types.ObjectId.isValid(itemId)) {
+            return res.status(404).json({ error: "Incorrect ID", itemId })
         }
 
         res.status(404).json({ error })
