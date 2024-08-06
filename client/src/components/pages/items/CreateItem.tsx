@@ -8,8 +8,11 @@ import {
 import { app } from "../../../firebase"
 import { useCreateItemMutation } from "../../../app/api/itemsApiSlice"
 import useAuth from "../../../customHooks/useAuth"
+import { useNavigate } from "react-router-dom"
 
 export default function CreateItem() {
+    const navigate = useNavigate()
+
     const [formData, setFormData] = useState({
         name: "",
         description: "",
@@ -24,7 +27,7 @@ export default function CreateItem() {
 
     const { id } = useAuth()
 
-    const [addNewItem, { isLoading, isSuccess, isError }] =
+    const [createItem, { isLoading, isSuccess, isError }] =
         useCreateItemMutation()
 
     useEffect(() => {
@@ -37,8 +40,12 @@ export default function CreateItem() {
                 category: "",
                 imageUrls: [],
             })
+
+            setFiles([])
+
+            navigate("/dashboard/my-items")
         }
-    }, [isSuccess])
+    }, [isSuccess, navigate])
 
     useEffect(() => {
         setErrorMsg("")
@@ -137,18 +144,7 @@ export default function CreateItem() {
                 userRef: id,
             }
 
-            await addNewItem(submitData).unwrap()
-
-            setFormData({
-                name: "",
-                description: "",
-                location: "",
-                status: "",
-                category: "",
-                imageUrls: [],
-            })
-
-            setFiles([])
+            await createItem(submitData).unwrap()
         } catch (error) {
             if (!error.status) {
                 return setErrorMsg("Network error")
@@ -190,7 +186,7 @@ export default function CreateItem() {
                         onChange={handleChange}
                         placeholder="Description"
                         minLength={3}
-                        maxLength={120}
+                        maxLength={240}
                         required
                     />
                     <input
@@ -286,7 +282,6 @@ export default function CreateItem() {
                                             className="p-2 border rounded-xl"
                                         >
                                             <img
-                                                // key={url}
                                                 src={url}
                                                 alt="item images"
                                                 className="h-28 w-28 rounded-xl object-cover"
