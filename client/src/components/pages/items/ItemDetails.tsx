@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { Link, useNavigate, useParams } from "react-router-dom"
 import { useDeleteItemMutation } from "../../../app/api/itemsApiSlice"
+import useAuth from "../../../customHooks/useAuth"
 
 export default function ItemDetails() {
     const baseUrl = "http://localhost:3000/api/"
@@ -10,6 +11,7 @@ export default function ItemDetails() {
 
     const navigate = useNavigate()
 
+    const { id: userId, role } = useAuth()
     const [item, setItem] = useState(null)
     const { id } = useParams()
 
@@ -24,32 +26,51 @@ export default function ItemDetails() {
         fetchData()
     }, [baseUrl, id])
 
+    useEffect(() => {
+        if (isSuccess) {
+            navigate("/dashboard/my-items")
+        }
+    }, [isSuccess, navigate])
+
     if (!item) {
         return <div className="">No item details available</div>
     }
 
-    // if (loading) {
-    //     return <div className="">Loading...</div>
-    // }
+    if (isLoading) {
+        return <div className="">Loading...</div>
+    }
 
-    // if (isError) {
-    //     return <div className="">{error.data.msg}</div>
-    // }
+    if (isError) {
+        return <div className="">{error.data.msg}</div>
+    }
 
     const handleDelete = async () => {
         try {
-            await deleteItem(id)
-
-            if (isSuccess) {
-                navigate("/dashboard/my-items")
-            }
-
-            if (isError) {
-                console.error("Error deleting item", error)
-            }
+            await deleteItem(id).unwrap()
         } catch (error) {
             console.error("Error logging out", error)
         }
+    }
+
+    let actionButtons = null
+
+    if (item.userRef === userId || role === "admin") {
+        actionButtons = (
+            <div className="flex space-x-4 mb-6">
+                <Link to={`/dashboard/edit-item/${item._id}`}>
+                    <button className="bg-blue text-white px-4 py-2 rounded-lg hover:bg-blue-600">
+                        Edit
+                    </button>
+                </Link>
+
+                <button
+                    className="bg-red-700 text-white px-4 py-2 rounded-lg hover:bg-red-600"
+                    onClick={handleDelete}
+                >
+                    Delete
+                </button>
+            </div>
+        )
     }
 
     return (
@@ -95,22 +116,7 @@ export default function ItemDetails() {
                     </div>
                 </div>
 
-                <div className="flex space-x-4 mb-6">
-                    <Link to="/dashboard/edit-item">
-                        <button
-                            className="bg-blue text-white px-4 py-2 rounded-lg hover:bg-blue-600"
-                        >
-                            Edit
-                        </button>
-                    </Link>
-
-                    <button
-                        className="bg-red-700 text-white px-4 py-2 rounded-lg hover:bg-red-600"
-                        onClick={handleDelete}
-                    >
-                        Delete
-                    </button>
-                </div>
+                {actionButtons}
             </div>
         </div>
     )
