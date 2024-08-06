@@ -15,6 +15,7 @@ import Contacts from "../components/pages/contacts/Contacts"
 import Dashboard from "../components/pages/dashboard/Dashboard"
 import CreateItem from "../components/pages/items/CreateItem"
 import MyItems from "../components/pages/items/MyItems"
+import EditItem from "../components/pages/items/EditItem"
 
 // To-Do: add aditional property called "additionalProps" or "props" if needed
 
@@ -97,9 +98,19 @@ const routesConfig = [
                 path: "create-item",
             },
             {
+                key: "edit-item",
+                element: EditItem,
+                path: "edit-item/:id",
+            },
+            {
                 key: "my-items",
                 element: MyItems,
                 path: "my-items",
+            },
+            {
+                key: "items/:id",
+                element: ItemDetails,
+                path: "items/:id",
             },
         ],
     },
