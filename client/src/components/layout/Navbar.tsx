@@ -1,14 +1,10 @@
-
 import { NavLink } from "react-router-dom"
 import styles from "./Navbar.module.css"
 import navigationConfig from "../../configs/navigationConfig"
 import useAuth from "../../customHooks/useAuth"
 
-
 export default function Navbar() {
-
     const { name, isAdmin } = useAuth()
-
 
     const visibleNavigationItems = navigationConfig.filter((navItem) => {
         // PUBLIC ROUTES
