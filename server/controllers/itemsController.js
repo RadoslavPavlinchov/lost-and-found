@@ -3,7 +3,51 @@ import Item from "../models/Item.js"
 
 const getAllItems = async (req, res) => {
     try {
-        const items = await Item.find({})
+        const name = req.query.name
+        const location = req.query.location
+        const status = req.query.status
+        const category = req.query.category
+        const page = parseInt(req.query.page) || 0
+        const limit = parseInt(req.query.limit) || 9
+        const search = req.query.limit || ""
+        const sort = req.query.limit || "createdAt"
+        const order = req.query.limit || "desc"
+
+        let query = {}
+
+        if (name === undefined || name === "") {
+            query.name = { $regex: ".*", $options: "i" } // Matches any string
+        } else {
+            query.name = { $regex: name, $options: "i" } // Matches the provided name
+        }
+
+        if (location) {
+            query.location = { $regex: location, $options: "i" }
+        }
+
+        if (status) {
+            query.status = { $regex: status, $options: "i" }
+        }
+
+        if (category) {
+            query.category = category
+        }
+
+        if (search) {
+            query.$or = [
+                { name: { $regex: search, $options: "i" } },
+                { location: { $regex: search, $options: "i" } },
+                { status: { $regex: search, $options: "i" } },
+                { category: { $regex: search, $options: "i" } },
+            ]
+        }
+
+        const items = await Item.find(query)
+            .sort({ [sort]: order })
+            .limit(limit)
+            .skip(page)
+
+        // const items = await Item.find({}).lean().exec()
 
         res.status(200).json(items)
     } catch (error) {
