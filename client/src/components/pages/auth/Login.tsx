@@ -78,7 +78,7 @@ export default function Login() {
 
             <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
                 <input
-                    className="border rounded-xl p-2"
+                    className="border rounded-xl p-2 focus:outline-none"
                     type="email"
                     id="email"
                     value={formData.email}
@@ -89,7 +89,7 @@ export default function Login() {
                 />
 
                 <input
-                    className="border rounded-xl p-2"
+                    className="border rounded-xl p-2 focus:outline-none"
                     type="password"
                     id="password"
                     value={formData.password}

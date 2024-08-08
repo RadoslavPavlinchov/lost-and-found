@@ -79,7 +79,7 @@ export default function Register() {
 
             <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
                 <input
-                    className="border rounded-xl p-2"
+                    className="border rounded-xl p-2 focus:outline-none"
                     type="text"
                     id="name"
                     name="name"
@@ -90,7 +90,7 @@ export default function Register() {
                     value={formData.name}
                 />
                 <input
-                    className="border rounded-xl p-2"
+                    className="border rounded-xl p-2 focus:outline-none"
                     type="email"
                     id="email"
                     name="email"
@@ -100,7 +100,7 @@ export default function Register() {
                     value={formData.email}
                 />
                 <input
-                    className="border rounded-xl  p-2 "
+                    className="border rounded-xl  p-2 focus:outline-none"
                     type="password"
                     id="password"
                     name="password"
