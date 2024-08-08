@@ -75,8 +75,17 @@ export default function ItemDetails() {
 
     return (
         <div className="p-4 mx-auto mt-2">
-            <div className="bg-gray-50 rounded-lg p-4 max-w-4xl w-full">
+            <div className="bg-gray-200 rounded-lg p-4 max-w-4xl w-full">
                 <h1 className="text-2xl font-bold mb-4">{item.name}</h1>
+                <p
+                    className={`w-full max-w-[65px] text-center p-0.5 rounded-2xl mb-4 ${
+                        item.status === "lost"
+                            ? "bg-yellow  text-gray-950"
+                            : "bg-green  text-gray-50"
+                    }`}
+                >
+                    {item.status === "lost" ? "Lost" : "Found"}
+                </p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 mb-6">
                     {item.imageUrls.map((src, index) => (
@@ -88,12 +97,10 @@ export default function ItemDetails() {
                         />
                     ))}
                 </div>
-
                 <div className="mb-6">
                     <p className="font-bold">Description:</p>
                     <p> {item.description}</p>
                 </div>
-
                 <div className="mb-6">
                     <div className="mb-2">
                         <span className="font-bold">Location:</span>{" "}
@@ -115,7 +122,6 @@ export default function ItemDetails() {
                         {new Date(item.updatedAt).toLocaleDateString()}
                     </div>
                 </div>
-
                 {actionButtons}
             </div>
         </div>
