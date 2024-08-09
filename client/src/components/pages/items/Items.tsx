@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
 import { selectItemIds, useGetItemsQuery } from "../../../app/api/itemsApiSlice"
 import Item from "./Item"
@@ -6,8 +6,9 @@ import Item from "./Item"
 export default function Items() {
     const [filterData, setFilterData] = useState({
         searchWord: "",
-        category: "",
-        status: "",
+        found: false,
+        lost: false,
+        category: "electronics",
         sort: "latest",
     })
 
@@ -26,20 +27,47 @@ export default function Items() {
     //     setFilters({ ...filters, [e.target.name]: e.target.value })
     // }
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.id === "found" || e.target.id === "lost") {
+    useEffect(() => {
+        const urlParams = new URLSearchParams(location.search)
+
+        const searchWordFromUrl = urlParams.get("searchWord")
+        const foundFromUrl = urlParams.get("found")
+        const lostFromUrl = urlParams.get("lost")
+        const categoryFromUrl = urlParams.get("category")
+        const sortFromUrl = urlParams.get("sort")
+
+        if (
+            searchWordFromUrl ||
+            foundFromUrl ||
+            lostFromUrl ||
+            categoryFromUrl ||
+            sortFromUrl
+        ) {
+            setFilterData({
+                searchWord: searchWordFromUrl || "",
+                found: foundFromUrl ? true : false,
+                lost: lostFromUrl ? true : false,
+                category: categoryFromUrl || "",
+                sort: sortFromUrl || "",
+            })
+        }
+    }, [])
+
+    const handleChange = (
+        e: React.ChangeEvent<HTMLInputElement> // | HTMLSelectElement
+    ) => {
+        if (e.target.type === "checkbox") {
+            console.log("e.target.checked", e.target.checked)
             setFilterData({
                 ...filterData,
-                status: e.target.id,
+                [e.target.id]: e.target.checked,
             })
         } else {
-            setFilterData({ ...filterData, [e.target.id]: e.target.value })
+            setFilterData({
+                ...filterData,
+                [e.target.id]: e.target.value,
+            })
         }
-
-        // if (e.target.name === "searchWord") {
-        // }
-
-        console.log("e.target.id 2", filterData)
     }
 
     // const filteredItems = items.filter((item) => {
@@ -57,7 +85,13 @@ export default function Items() {
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
 
-        console.log("Form submitted", e)
+        const urlParams = new URLSearchParams()
+
+        urlParams.set("searchWord", filterData.searchWord)
+        urlParams.set("found", `${filterData.found}`)
+        urlParams.set("lost", `${filterData.lost}`)
+        urlParams.set("category", filterData.category)
+        urlParams.set("sort", filterData.sort)
     }
 
     let content
@@ -97,7 +131,7 @@ export default function Items() {
                                     name="found"
                                     id="found"
                                     className="w-5"
-                                    checked={filterData.status === "found"}
+                                    checked={filterData.found}
                                     onChange={handleChange}
                                 />
                                 <span>Found</span>
@@ -108,7 +142,7 @@ export default function Items() {
                                     name="lost"
                                     id="lost"
                                     className="w-5"
-                                    checked={filterData.status === "lost"}
+                                    checked={filterData.lost}
                                     onChange={handleChange}
                                 />
                                 <span>Lost</span>
