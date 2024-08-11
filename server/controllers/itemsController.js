@@ -4,6 +4,10 @@ import Item from "../models/Item.js"
 function getStatus(req) {
     const { found, lost } = req.query
 
+    if (found === "true" && lost === "true") {
+        return "both"
+    }
+
     if (found === "true") {
         return "found"
     }
