@@ -11,7 +11,7 @@ export default function Items() {
         search: "",
         found: false,
         lost: false,
-        category: "electronics",
+        category: "",
         sort: "latest",
     })
 
@@ -158,6 +158,7 @@ export default function Items() {
                                 onChange={handleChange}
                                 value={filterData.category}
                             >
+                                <option value="">Select a category</option>
                                 <option value="electronics">Electronics</option>
                                 <option value="clothing">Clothing</option>
                                 <option value="jewelry">Jewelry</option>
