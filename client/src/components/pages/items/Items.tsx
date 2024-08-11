@@ -1,16 +1,21 @@
 import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { useSelector } from "react-redux"
 import { selectItemIds, useGetItemsQuery } from "../../../app/api/itemsApiSlice"
 import Item from "./Item"
 
 export default function Items() {
+    const navigate = useNavigate()
+
     const [filterData, setFilterData] = useState({
-        searchWord: "",
+        search: "",
         found: false,
         lost: false,
         category: "electronics",
         sort: "latest",
     })
+
+    const [query, setQuery] = useState("")
 
     const {
         data: items = [],
@@ -18,46 +23,35 @@ export default function Items() {
         isSuccess,
         isError,
         error,
-    } = useGetItemsQuery("itemsList")
+    } = useGetItemsQuery(query)
 
     const orderedItemsIds = useSelector(selectItemIds)
     console.log("orderedItemsIds IDS", orderedItemsIds)
 
-    // const handleFilterChange = (e) => {
-    //     setFilters({ ...filters, [e.target.name]: e.target.value })
-    // }
-
     useEffect(() => {
-        const urlParams = new URLSearchParams(location.search)
+        const searchParams = new URLSearchParams(location.search)
+        const newFilterData = {}
 
-        const searchWordFromUrl = urlParams.get("searchWord")
-        const foundFromUrl = urlParams.get("found")
-        const lostFromUrl = urlParams.get("lost")
-        const categoryFromUrl = urlParams.get("category")
-        const sortFromUrl = urlParams.get("sort")
-
-        if (
-            searchWordFromUrl ||
-            foundFromUrl ||
-            lostFromUrl ||
-            categoryFromUrl ||
-            sortFromUrl
-        ) {
-            setFilterData({
-                searchWord: searchWordFromUrl || "",
-                found: foundFromUrl ? true : false,
-                lost: lostFromUrl ? true : false,
-                category: categoryFromUrl || "",
-                sort: sortFromUrl || "",
-            })
+        for (const [key, value] of searchParams.entries()) {
+            if (key === "found" || key === "lost") {
+                newFilterData[key] = value === "true"
+            } else {
+                newFilterData[key] = value
+            }
         }
+
+        setFilterData((prevFilterData) => ({
+            ...prevFilterData,
+            ...newFilterData,
+        }))
+
+        // here we make a request, checkout our ordering of operations
     }, [])
 
     const handleChange = (
-        e: React.ChangeEvent<HTMLInputElement> // | HTMLSelectElement
+        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
     ) => {
         if (e.target.type === "checkbox") {
-            console.log("e.target.checked", e.target.checked)
             setFilterData({
                 ...filterData,
                 [e.target.id]: e.target.checked,
@@ -87,11 +81,17 @@ export default function Items() {
 
         const urlParams = new URLSearchParams()
 
-        urlParams.set("searchWord", filterData.searchWord)
+        urlParams.set("search", filterData.search)
         urlParams.set("found", `${filterData.found}`)
         urlParams.set("lost", `${filterData.lost}`)
         urlParams.set("category", filterData.category)
         urlParams.set("sort", filterData.sort)
+
+        const query = urlParams.toString()
+
+        setQuery(query)
+
+        navigate(`/items?${query}`)
     }
 
     let content
@@ -115,11 +115,11 @@ export default function Items() {
                         <label>Search:</label>
                         <input
                             type="text"
-                            name="searchWord"
-                            id="searchWord"
+                            name="search"
+                            id="search"
                             placeholder="Search..."
                             className="border border-gray-600 rounded-lg focus:outline-none p-2 w-full"
-                            value={filterData.searchWord}
+                            value={filterData.search}
                             onChange={handleChange}
                         />
 
@@ -150,13 +150,13 @@ export default function Items() {
                         </div>
 
                         <div className="">
-                            <label htmlFor="">Category:</label>
+                            <label htmlFor="category">Category:</label>
                             <select
                                 name="category"
                                 id="category"
                                 className="border border-gray-600 rounded-lg focus:outline-none p-2 w-full"
                                 onChange={handleChange}
-                                defaultValue={filterData.category}
+                                value={filterData.category}
                             >
                                 <option value="electronics">Electronics</option>
                                 <option value="clothing">Clothing</option>
@@ -172,6 +172,7 @@ export default function Items() {
                                 id="sort"
                                 className="border border-gray-600 rounded-lg focus:outline-none p-2 w-full"
                                 onChange={handleChange}
+                                value={filterData.sort}
                             >
                                 <option value="latest">Latest</option>
                                 <option value="oldest">Oldest</option>
