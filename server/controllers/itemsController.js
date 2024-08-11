@@ -1,17 +1,30 @@
 import mongoose from "mongoose"
 import Item from "../models/Item.js"
 
+function getStatus(req) {
+    const { found, lost } = req.query
+
+    if (found === "true") {
+        return "found"
+    }
+
+    if (lost === "true") {
+        return "lost"
+    }
+
+    return "both"
+}
+
 const getAllItems = async (req, res) => {
     try {
-        const name = req.query.name
+        const name = req.query.search
         const location = req.query.location
-        const status = req.query.status
+        const status = getStatus(req)
         const category = req.query.category
         const page = parseInt(req.query.page) || 0
         const limit = parseInt(req.query.limit) || 9
-        const search = req.query.limit || ""
-        const sort = req.query.limit || "createdAt"
-        const order = req.query.limit || "desc"
+        const sort = req.query.sort || "createdAt"
+        const order = req.query.order || "desc"
 
         let query = {}
 
@@ -25,29 +38,22 @@ const getAllItems = async (req, res) => {
             query.location = { $regex: location, $options: "i" }
         }
 
-        if (status) {
-            query.status = { $regex: status, $options: "i" }
+        if (status === "found") {
+            query.status = "found"
+        } else if (status === "lost") {
+            query.status = "lost"
+        } else if (status === "both") {
+            query.status = { $in: ["found", "lost"] }
         }
 
         if (category) {
             query.category = category
         }
 
-        if (search) {
-            query.$or = [
-                { name: { $regex: search, $options: "i" } },
-                { location: { $regex: search, $options: "i" } },
-                { status: { $regex: search, $options: "i" } },
-                { category: { $regex: search, $options: "i" } },
-            ]
-        }
-
         const items = await Item.find(query)
             .sort({ [sort]: order })
             .limit(limit)
             .skip(page)
-
-        // const items = await Item.find({}).lean().exec()
 
         res.status(200).json(items)
     } catch (error) {
