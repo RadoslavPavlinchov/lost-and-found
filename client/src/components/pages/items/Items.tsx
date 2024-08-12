@@ -75,6 +75,7 @@ export default function Items() {
     //         state: { item }
     //     });
     // };
+    const onShowMoreClick = () => {}
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
@@ -186,25 +187,30 @@ export default function Items() {
                     </form>
                 </div>
 
-                {/* Items container - result*/}
-                <div className="max-w-4xl">
+                <div className="flex-1">
                     <h2 className="border-b p-2 mt-6">Items:</h2>
 
-                    {/* {
-                    filteredItems.map((item) => (
-                        <div
-                            key={item.id}
-                            className={styles.itemCard}
-                            onClick={() => handleItemClick(item)}
-                        >
-                            {item.name}
-                        </div>
-                    ))
-                } */}
+                    <div className="flex flex-wrap gap-4 p-7">
+                        {ids.length === 0 && (
+                            <div className="max-w-4xl">
+                                <p>No items found</p>
+                            </div>
+                        )}
 
-                    {ids.map((itemId) => (
-                        <Item key={itemId} item={entities[itemId]} />
-                    ))}
+                        {ids.length > 0 &&
+                            ids.map((itemId) => (
+                                <Item key={itemId} item={entities[itemId]} />
+                            ))}
+
+                        {ids.length > 8 && (
+                            <button
+                                onClick={onShowMoreClick}
+                                className="bg-green text-white rounded-xl p-2 text-center max-w-lg mx-auto"
+                            >
+                                Show More
+                            </button>
+                        )}
+                    </div>
                 </div>
             </div>
         )
