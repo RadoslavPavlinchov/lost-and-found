@@ -5,7 +5,7 @@ export default function ItemIcons({ item }) {
         <div className="flex flex-wrap justify-center">
             <div className="w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/6 xl:w-1/8 p-4">
                 <div className="flex flex-col items-center">
-                    <FaEye />
+                    <FaEye className="w-6 h-6 text-gray-400" />
                     <span className="text-xs text-gray-500">
                         {item?.seenCounter}
                     </span>
@@ -13,7 +13,7 @@ export default function ItemIcons({ item }) {
             </div>
             <div className="w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/6 xl:w-1/8 p-4">
                 <div className="flex flex-col items-center">
-                    <FaComment />
+                    <FaComment className="w-6 h-6 text-gray-400" />
                     <span className="text-xs text-gray-500">
                         {item.comments?.length}
                     </span>
@@ -21,7 +21,7 @@ export default function ItemIcons({ item }) {
             </div>
             <div className="w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/6 xl:w-1/8 p-4">
                 <div className="flex flex-col items-center">
-                    <FaShare />
+                    <FaShare className="w-6 h-6 text-gray-400" />
                 </div>
             </div>
         </div>
