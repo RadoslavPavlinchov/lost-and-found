@@ -1,10 +1,20 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { FaSearch } from "react-icons/fa"
 import { useNavigate } from "react-router-dom"
 
 export default function Home() {
     const [searchWord, setSearchWord] = useState("")
     const navigate = useNavigate()
+
+    useEffect(() => {
+        const urlParams = new URLSearchParams(location.search)
+
+        const searchWordFromUrl = urlParams.get("search")
+
+        if (searchWordFromUrl) {
+            setSearchWord(searchWordFromUrl)
+        }
+    }, [])
 
     const changeSearchWordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchWord(e.target.value)
@@ -13,12 +23,12 @@ export default function Home() {
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
 
-        const urlParams = new URLSearchParams(window.location.search)
+        const urlParams = new URLSearchParams(location.search)
         urlParams.set("search", searchWord)
 
-        const searchQuery = urlParams.toString()
+        const query = urlParams.toString()
 
-        navigate(`/items?${searchQuery}`)
+        navigate(`/items?${query}`)
     }
 
     return (
