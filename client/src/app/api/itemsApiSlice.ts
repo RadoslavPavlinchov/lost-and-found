@@ -7,9 +7,13 @@ const initialState = itemAdapter.getInitialState()
 export const itemsApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
         getItems: builder.query({
-            query: () => "items",
-            validateStatus: (response, result) =>
-                response.status === 200 && !result.error,
+            query: (params) => ({
+                url: `items`,
+                params,
+            }),
+            validateStatus: (response, result) => {
+                return response.status === 200 && !result.isError
+            },
             transformResponse: (responseData) => {
                 const loadedItems = responseData.map((item) => {
                     item.id = item._id
@@ -19,20 +23,30 @@ export const itemsApiSlice = apiSlice.injectEndpoints({
 
                 return itemAdapter.setAll(initialState, loadedItems)
             },
-            providesTags: (result, error, arg) => {
-                if (result?.ids) {
-                    return [
-                        { type: "Item", id: "LIST" },
-                        ...result.ids.map((id) => ({ type: "Item", id })),
-                    ]
-                } else {
-                    return [{ type: "Item", id: "LIST" }]
-                }
+            providesTags: (result, error, arg) => [
+                { type: "Item", id: "LIST" },
+                ...result.ids.map((id) => ({ type: "Item", id })),
+            ],
+        }),
+        getItemsByUserId: builder.query({
+            query: (userId) => `items/user/${userId}`,
+            transformResponse: (responseData) => {
+                const loadedItems = responseData.map((item) => {
+                    item.id = item._id
+
+                    return item
+                })
+
+                return itemAdapter.setAll(initialState, loadedItems)
             },
+            providesTags: (result, error, arg) => [
+                { type: "Item", id: "LIST" },
+                ...result.ids.map((id) => ({ type: "Item", id })),
+            ],
         }),
         createItem: builder.mutation({
             query: (initialItemData) => ({
-                url: "items",
+                url: "/items",
                 method: "POST",
                 body: {
                     ...initialItemData,
@@ -41,34 +55,37 @@ export const itemsApiSlice = apiSlice.injectEndpoints({
             invalidatesTags: [{ type: "Item", id: "LIST" }],
         }),
         updateItem: builder.mutation({
-            query: (initialItemData) => ({
-                url: "items",
-                method: "PATCH",
-                body: {
-                    ...initialItemData,
-                },
-            }),
+            query: ({ formData, id }) => {
+                return {
+                    url: `/items/${id}`,
+                    method: "PATCH",
+                    body: {
+                        ...formData,
+                    },
+                }
+            },
             invalidatesTags: (result, error, { itemId }) => [
                 { type: "Item", id: itemId },
             ],
         }),
         deleteItem: builder.mutation({
-            query: ({ itemId }) => ({
-                url: `items`,
-                method: "DELETE",
-                body: {
-                    itemId,
-                },
-            }),
-            invalidatesTags: (result, error, itemId) => [
-                { type: "Item", id: itemId },
-            ],
+            query: (itemId) => {
+                console.log("Deleting item with ID:", itemId)
+                return {
+                    url: `/items/${itemId}`,
+                    method: "DELETE",
+                }
+            },
+            invalidatesTags: (result, error, { itemId }) => {
+                return [{ type: "Item", id: itemId }]
+            },
         }),
     }),
 })
 
 export const {
     useGetItemsQuery,
+    useGetItemsByUserIdQuery,
     useCreateItemMutation,
     useUpdateItemMutation,
     useDeleteItemMutation,
@@ -78,8 +95,13 @@ export const selectItemsResult = itemsApiSlice.endpoints.getItems.select()
 
 const selectItemsData = createSelector(
     selectItemsResult,
-    (result) => result.data
+    (itemsResult) => itemsResult.data
 )
+
+// export const selectItemById = (state, itemId) => {
+//     console.log("Selecting item by ID", state, itemId)
+//     return state.items.items.find((item) => item._id === itemId)
+// }
 
 export const {
     selectAll: selectAllItems,
