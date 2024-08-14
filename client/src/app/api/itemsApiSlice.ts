@@ -28,6 +28,42 @@ export const itemsApiSlice = apiSlice.injectEndpoints({
                 ...result.ids.map((id) => ({ type: "Item", id })),
             ],
         }),
+        getFoundItems: builder.query({
+            query: ({ limit = 4 }) => `items?found=true&limit=${limit}`,
+            transformResponse: (responseData) => {
+                const loadedItems = responseData.map((item) => {
+                    item.id = item._id
+
+                    return item
+                })
+
+                return itemAdapter.setAll(initialState, loadedItems)
+            },
+        }),
+        getLostItems: builder.query({
+            query: ({ limit = 4 }) => `items?lost=true&limit=${limit}`,
+            transformResponse: (responseData) => {
+                const loadedItems = responseData.map((item) => {
+                    item.id = item._id
+
+                    return item
+                })
+
+                return itemAdapter.setAll(initialState, loadedItems)
+            },
+        }),
+        getLatestItems: builder.query({
+            query: ({ limit = 4 }) => `items?limit=${limit}`,
+            transformResponse: (responseData) => {
+                const loadedItems = responseData.map((item) => {
+                    item.id = item._id
+
+                    return item
+                })
+
+                return itemAdapter.setAll(initialState, loadedItems)
+            },
+        }),
         getItemsByUserId: builder.query({
             query: (userId) => `items/user/${userId}`,
             transformResponse: (responseData) => {
@@ -85,6 +121,9 @@ export const itemsApiSlice = apiSlice.injectEndpoints({
 
 export const {
     useGetItemsQuery,
+    useGetFoundItemsQuery,
+    useGetLostItemsQuery,
+    useGetLatestItemsQuery,
     useGetItemsByUserIdQuery,
     useCreateItemMutation,
     useUpdateItemMutation,
