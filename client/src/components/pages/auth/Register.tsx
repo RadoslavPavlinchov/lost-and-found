@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux"
 import { Link, useNavigate } from "react-router-dom"
 import { useRegisterMutation } from "../../../app/api/authApiSlice"
 import { setCredentials } from "../../../app/api/authSlice"
+import Button from "../../common/Button"
 
 export default function Register() {
     const nameRef = useRef()
@@ -110,12 +111,7 @@ export default function Register() {
                     value={formData.password}
                 />
 
-                <button
-                    className="bg-blue text-white rounded-xl p-2"
-                    type="submit"
-                >
-                    Register
-                </button>
+                <Button label="Register" type="submit" />
             </form>
 
             <div className="flex justify-center gap-2 p-2 mt-4">

@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux"
 
 import { setCredentials } from "../../../app/api/authSlice"
 import { useLoginMutation } from "../../../app/api/authApiSlice"
+import Button from "../../common/Button"
 
 export default function Login() {
     const emailRef = useRef()
@@ -98,12 +99,7 @@ export default function Login() {
                     required
                 />
 
-                <button
-                    className="bg-blue text-white rounded-xl p-2"
-                    type="submit"
-                >
-                    Login
-                </button>
+                <Button label="Login" type="submit" />
 
                 <div className="flex justify-center gap-2 p-2 mt-4">
                     <p>Don't have an account yet?</p>
