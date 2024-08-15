@@ -77,7 +77,7 @@ export default function Header() {
                                 <div className="py-1">
                                     <MenuItem>
                                         <NavLink
-                                            to="/dashboard"
+                                            to="/dashboard/profile"
                                             // className={({ isActive }) =>
                                             //     isActive
                                             //         ? styles.activeNavLink

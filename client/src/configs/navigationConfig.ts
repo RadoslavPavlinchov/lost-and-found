@@ -20,7 +20,7 @@ const navigationConfig = [
         text: "About Us",
         to: "/aboutUs",
         visibility: {
-            private: [],
+            private: ["user", "admin"],
             public: true,
         },
     },
@@ -28,7 +28,7 @@ const navigationConfig = [
         text: "Contacts",
         to: "/contacts",
         visibility: {
-            private: [],
+            private: ["user", "admin"],
             public: true,
         },
     },
