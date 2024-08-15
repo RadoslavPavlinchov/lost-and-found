@@ -28,6 +28,9 @@ export const itemsApiSlice = apiSlice.injectEndpoints({
                 ...result.ids.map((id) => ({ type: "Item", id })),
             ],
         }),
+        getItemsCount: builder.query({
+            query: () => "/items/getItemsCount",
+        }),
         getFoundItems: builder.query({
             query: ({ limit = 4 }) => `items?found=true&limit=${limit}`,
             transformResponse: (responseData) => {
@@ -121,6 +124,7 @@ export const itemsApiSlice = apiSlice.injectEndpoints({
 
 export const {
     useGetItemsQuery,
+    useGetItemsCountQuery,
     useGetFoundItemsQuery,
     useGetLostItemsQuery,
     useGetLatestItemsQuery,
