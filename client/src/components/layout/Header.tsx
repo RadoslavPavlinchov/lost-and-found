@@ -8,7 +8,8 @@ import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/react"
 
 export default function Header() {
     const navigate = useNavigate()
-    const { name } = useAuth()
+    const { name, avatar } = useAuth()
+
     const [
         logout,
         {
@@ -64,7 +65,7 @@ export default function Header() {
                                 <MenuButton className="inline-flex w-full justify-center gap-x-1.5 rounded-md px-3 py-2">
                                     <img
                                         alt="dashboard"
-                                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                                        src={avatar}
                                         className="inline-block h-10 w-10 rounded-full ring-2 ring-white object-cover"
                                     />
                                 </MenuButton>

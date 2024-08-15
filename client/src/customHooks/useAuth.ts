@@ -9,7 +9,7 @@ const useAuth = () => {
 
     if (token) {
         const decodedToken = jwtDecode(token)
-        const { name, role, email, id } = decodedToken.userInfo
+        const { name, role, email, id, avatar } = decodedToken.userInfo
 
         isAdmin = role === "admin"
 
@@ -19,6 +19,7 @@ const useAuth = () => {
             email,
             id,
             isAdmin,
+            avatar,
         }
     }
 
@@ -28,6 +29,7 @@ const useAuth = () => {
         email: "",
         id: "",
         isAdmin,
+        avatar: "",
     }
 }
 

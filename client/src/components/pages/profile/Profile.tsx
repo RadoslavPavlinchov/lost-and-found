@@ -24,7 +24,7 @@ import ShowError from "../../common/ShowError"
 import ShowSuccess from "../../common/ShowSuccess"
 
 export default function Profile() {
-    const { name, email, id } = useAuth()
+    const { name, email, id, avatar } = useAuth()
     const [file, setFile] = useState<File | null>(null)
     const fileRef = useRef<HTMLInputElement>(null)
     const [uploadProgress, setUploadProgress] = useState(0)
@@ -33,8 +33,9 @@ export default function Profile() {
         name: name || "",
         email: email || "",
         password: "",
-        avatar: "",
+        avatar: avatar || "",
     })
+    const [imageFileUrl, setImageFileUrl] = useState("")
     const [modifiedFields, setModifiedFields] = useState({})
     const [successMsg, setSuccessMsg] = useState("")
     const [errorMsg, setErrorMsg] = useState("")
@@ -51,13 +52,13 @@ export default function Profile() {
             setSuccessMsg("Profile updated successfully")
 
             setFormData({
-                name: name || "",
-                email: email || "",
+                name: name,
+                email: email,
                 password: "",
-                avatar: "",
+                avatar: imageFileUrl || formData.avatar,
             })
         }
-    }, [name, email, isSuccess])
+    }, [name, email, isSuccess, avatar])
 
     useEffect(() => {
         if (file) {
@@ -110,6 +111,7 @@ export default function Profile() {
                     uploadTask.snapshot.ref
                 )
                 setFormData({ ...formData, avatar: downloadURL })
+                setImageFileUrl(downloadURL)
             }
         )
     }
@@ -228,62 +230,61 @@ export default function Profile() {
     }
 
     return (
-        <div className="max-w-md mx-auto">
-            <h2 className="text-center my-7">Profile</h2>
-
+        <div className="max-w-md min-h-screen mx-auto mt-10 w-full">
             {errorMsg && <ShowError errorMsg={errorMsg} />}
 
             {isSuccess && <ShowSuccess successMsg={successMsg} />}
 
-            <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-                <input
-                    type="file"
-                    ref={fileRef}
-                    hidden
-                    accept="image/*"
-                    onChange={changeFileHandler}
-                />
+            <h2 className="text-center font-semibold text-3xl my-6">Profile</h2>
 
-                <img
-                    alt="dashboard"
-                    src={
-                        formData.avatar ||
-                        "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                    }
-                    className="h-36 w-36 rounded-full ring-2 ring-white object-cover cursor-pointer self-center mt-2"
-                    onClick={clickHandler}
-                />
+            <form className="flex flex-col" onSubmit={handleSubmit}>
+                <div className="flex flex-col gap-4">
+                    <input
+                        type="file"
+                        ref={fileRef}
+                        hidden
+                        accept="image/*"
+                        onChange={changeFileHandler}
+                    />
 
-                <p className="text-center">{uploadProgressElement()}</p>
+                    <img
+                        alt="dashboard"
+                        src={imageFileUrl || formData.avatar}
+                        className="h-36 w-36 rounded-full ring-2 ring-white object-cover cursor-pointer self-center mt-2 border-2 overflow-hidden shadow-md"
+                        onClick={clickHandler}
+                    />
 
-                <input
-                    className="border rounded-xl p-2"
-                    type="text"
-                    name="name"
-                    placeholder="Name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                />
-                <input
-                    className="border rounded-xl p-2"
-                    type="email"
-                    name="email"
-                    placeholder="Email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                />
-                <input
-                    className="border rounded-xl p-2"
-                    type="password"
-                    name="password"
-                    placeholder="Password"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                />
+                    <p className="text-center">{uploadProgressElement()}</p>
+
+                    <input
+                        className="border rounded-xl p-2"
+                        type="text"
+                        name="name"
+                        placeholder="Name"
+                        value={formData.name}
+                        onChange={handleInputChange}
+                    />
+                    <input
+                        className="border rounded-xl p-2"
+                        type="email"
+                        name="email"
+                        placeholder="Email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                    />
+                    <input
+                        className="border rounded-xl p-2"
+                        type="password"
+                        name="password"
+                        placeholder="Password"
+                        value={formData.password}
+                        onChange={handleInputChange}
+                    />
+                </div>
 
                 <button
                     disabled={isLoading}
-                    className="bg-blue text-white p-2 rounded"
+                    className="bg-blue text-white rounded-xl p-2 mt-10"
                 >
                     {isLoading ? "Loading..." : "Update"}
                 </button>
