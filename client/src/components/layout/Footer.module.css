@@ -1,9 +1,34 @@
 .footer {
-    background-color: #282c34;
-    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: #073b4c;
     color: white;
-    text-align: center;
-    position: fixed;
-    width: 100%;
-    bottom: 0;
+}
+
+.column {
+    flex: 1;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.middleColumn {
+    flex: 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.singleLine {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.column a {
+    display: block;
+    margin-bottom: 10px;
 }
