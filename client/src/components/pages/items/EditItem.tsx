@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react"
+import { useNavigate, useParams } from "react-router-dom"
+import { useSelector } from "react-redux"
 import {
     getDownloadURL,
     getStorage,
@@ -6,26 +8,31 @@ import {
     uploadBytesResumable,
 } from "firebase/storage"
 import { app } from "../../../firebase"
-import { useCreateItemMutation } from "../../../app/api/itemsApiSlice"
-import useAuth from "../../../customHooks/useAuth"
+import {
+    useUpdateItemMutation,
+    selectItemById,
+} from "../../../app/api/itemsApiSlice"
 
 export default function EditItem() {
+    const navigate = useNavigate()
+    const params = useParams()
+    const [updateItem, { isLoading, isSuccess, isError, error }] =
+        useUpdateItemMutation()
+        
+    const item = useSelector((state) => selectItemById(state, params.id))
+
     const [formData, setFormData] = useState({
-        name: "",
-        description: "",
-        location: "",
-        status: "",
-        category: "",
-        imageUrls: [],
+        name: item.name,
+        description: item.description,
+        location: item.location,
+        status: item.status,
+        category: item.category,
+        imageUrls: item.imageUrls,
     })
     const [files, setFiles] = useState([])
 
     const [errorMsg, setErrorMsg] = useState("")
 
-    const { id } = useAuth()
-
-    const [addNewItem, { isLoading, isSuccess, isError }] =
-        useCreateItemMutation()
 
     useEffect(() => {
         if (isSuccess) {
@@ -44,14 +51,14 @@ export default function EditItem() {
         setErrorMsg("")
     }, [formData, files])
 
-    // const canCreate = () =>
+    // const canEdit = () =>
     //     validName && validEmail && validPassword && !isLoading
 
-    // const onCreateClicked = async (e) => {
+    // const onEditClicked = async (e) => {
     //     e.preventDefault()
 
-    //     if (canCreate()) {
-    //         addNewUser({ name, email, password, role })
+    //     if (canEdit()) {
+    //         updateItem({ name, email, password, role })
     //     }
     // }
 
@@ -130,14 +137,8 @@ export default function EditItem() {
         e.preventDefault()
 
         try {
-            // add input validations here
 
-            const submitData = {
-                ...formData,
-                userRef: id,
-            }
-
-            await addNewItem(submitData).unwrap()
+            await updateItem({ formData, id: item.id }).unwrap()
 
             setFormData({
                 name: "",
@@ -149,6 +150,8 @@ export default function EditItem() {
             })
 
             setFiles([])
+
+            navigate("/items")
         } catch (error) {
             if (!error.status) {
                 return setErrorMsg("Network error")
@@ -165,6 +168,17 @@ export default function EditItem() {
             setErrorMsg(error.data?.msg)
         }
     }
+
+    // const canEdit = () => {
+    //     return (
+    //         formData.name !== "" &&
+    //         formData.description !== "" &&
+    //         formData.location !== "" &&
+    //         formData.status !== "" &&
+    //         formData.category !== "" &&
+    //         formData.imageUrls.length > 0
+    //     )
+    // }
 
     return (
         <div className="p-2 max-w-md mx-auto">
@@ -311,6 +325,7 @@ export default function EditItem() {
                     className="bg-blue text-white rounded-xl p-2 mt-10"
                     type="submit"
                     disabled={isLoading}
+                    // disabled={!canEdit()}
                 >
                     {isLoading ? "Loading..." : "Edit"}
                 </button>
