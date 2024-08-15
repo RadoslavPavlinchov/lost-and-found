@@ -26,7 +26,7 @@ const getAllItems = async (req, res) => {
         const status = getStatus(req)
         const category = req.query.category
         const page = parseInt(req.query.page) || 0
-        const limit = parseInt(req.query.limit) || 9
+        const limit = parseInt(req.query.limit) || 100
         const sort = req.query.sort || "createdAt"
         const order = req.query.order || "desc"
 

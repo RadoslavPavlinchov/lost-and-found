@@ -23,7 +23,7 @@ export default function Items() {
         isSuccess,
         isError,
         error,
-        refetch,
+        // refetch,
     } = useGetItemsQuery(query)
 
     const orderedItemsIds = useSelector(selectItemIds)
@@ -76,10 +76,9 @@ export default function Items() {
     //         state: { item }
     //     });
     // };
-    const onShowMoreClick = () => {
-
-        refetch()
-    }
+    // const onShowMoreClick = () => {
+    //     refetch()
+    // }
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
@@ -206,14 +205,14 @@ export default function Items() {
                                 <Item key={itemId} item={entities[itemId]} />
                             ))}
 
-                        {ids.length > 8 && (
+                        {/* {ids.length > 8 && (
                             <button
                                 onClick={onShowMoreClick}
                                 className="bg-green text-white rounded-xl p-2 text-center max-w-lg mx-auto"
                             >
                                 Show More
                             </button>
-                        )}
+                        )} */}
                     </div>
                 </div>
             </div>
