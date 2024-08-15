@@ -14,6 +14,14 @@ import {
     useUpdateUserMutation,
 } from "../../../app/api/usersApiSlice"
 import { setCredentials, logout as setLogout } from "../../../app/api/authSlice"
+import {
+    validateEmail,
+    validatePasswordLength,
+    validatePasswordSpecialChar,
+    validateUsername,
+} from "../../../utils/validation"
+import ShowError from "../../common/ShowError"
+import ShowSuccess from "../../common/ShowSuccess"
 
 export default function Profile() {
     const { name, email, id } = useAuth()
@@ -27,6 +35,8 @@ export default function Profile() {
         password: "",
         avatar: "",
     })
+    const [modifiedFields, setModifiedFields] = useState({})
+    const [successMsg, setSuccessMsg] = useState("")
     const [errorMsg, setErrorMsg] = useState("")
 
     const navigate = useNavigate()
@@ -38,6 +48,8 @@ export default function Profile() {
 
     useEffect(() => {
         if (isSuccess) {
+            setSuccessMsg("Profile updated successfully")
+
             setFormData({
                 name: name || "",
                 email: email || "",
@@ -53,6 +65,18 @@ export default function Profile() {
             // setFile(null)
         }
     }, [file])
+
+    useEffect(() => {
+        setErrorMsg("")
+
+        if (successMsg) {
+            const timer = setTimeout(() => {
+                setSuccessMsg("")
+            }, 3000)
+
+            return () => clearTimeout(timer)
+        }
+    }, [formData, successMsg])
 
     const handleFileUpload = (file) => {
         const storage = getStorage(app)
@@ -103,6 +127,12 @@ export default function Profile() {
             ...formData,
             [e.target.name]: e.target.value,
         })
+        setModifiedFields({
+            ...modifiedFields,
+            [e.target.name]: true,
+        })
+
+        setSuccessMsg("")
     }
 
     const uploadProgressElement = () => {
@@ -138,6 +168,30 @@ export default function Profile() {
     const handleSubmit = async (e) => {
         e.preventDefault()
 
+        if (modifiedFields.email && !validateEmail(formData.email)) {
+            return setErrorMsg("Please enter a valid email address")
+        }
+
+        if (modifiedFields.name && !validateUsername(formData.name)) {
+            return setErrorMsg(
+                "Username must be between 3 and 20 characters long"
+            )
+        }
+
+        if (modifiedFields.password) {
+            if (!validatePasswordLength(formData.password)) {
+                return setErrorMsg(
+                    "Password must be at least 6 characters long"
+                )
+            }
+
+            if (!validatePasswordSpecialChar(formData.password)) {
+                return setErrorMsg(
+                    "Password must contain at least one special character"
+                )
+            }
+        }
+
         try {
             const data = {
                 name: formData.name,
@@ -145,7 +199,7 @@ export default function Profile() {
                 avatar: formData.avatar,
             }
 
-            if (formData.password) {
+            if (modifiedFields.password) {
                 data.password = formData.password
             }
 
@@ -165,6 +219,10 @@ export default function Profile() {
                 return setErrorMsg("Unauthorized")
             }
 
+            if (error.status === 500) {
+                return setErrorMsg("Server error, please try again later")
+            }
+
             setErrorMsg(error.data?.message)
         }
     }
@@ -173,8 +231,9 @@ export default function Profile() {
         <div className="max-w-md mx-auto">
             <h2 className="text-center my-7">Profile</h2>
 
-            <p>{errorMsg}</p>
-            <p className="text-green">{isSuccess && "Update successful"}</p>
+            {errorMsg && <ShowError errorMsg={errorMsg} />}
+
+            {isSuccess && <ShowSuccess successMsg={successMsg} />}
 
             <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
                 <input
