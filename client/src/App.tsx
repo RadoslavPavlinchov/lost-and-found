@@ -1,8 +1,10 @@
 import { Routes, Route, BrowserRouter } from "react-router-dom"
 import { Provider } from "react-redux"
-import { store } from "./app/store"
+import { persistor, store } from "./app/store"
 import Layout from "./components/layout/Layout"
 import routesConfig from "./configs/routesConfig"
+import { itemsApiSlice } from "./app/api/itemsApiSlice"
+import { PersistGate } from "redux-persist/es/integration/react"
 
 function createRoutes(routesConfig) {
     return routesConfig.map((route) => {
@@ -37,15 +39,21 @@ function createRoutes(routesConfig) {
 }
 
 export default function App() {
+    const items = store.dispatch(itemsApiSlice.endpoints.getItems.initiate())
+
+    console.log("ITEMS INIT", items)
+
     return (
-        <Provider store={store}>
-            <BrowserRouter>
-                <Routes>
-                    <Route element={<Layout />}>
-                        {createRoutes(routesConfig)}
-                    </Route>
-                </Routes>
-            </BrowserRouter>
-        </Provider>
+        <PersistGate persistor={persistor}>
+            <Provider store={store}>
+                <BrowserRouter>
+                    <Routes>
+                        <Route element={<Layout />}>
+                            {createRoutes(routesConfig)}
+                        </Route>
+                    </Routes>
+                </BrowserRouter>
+            </Provider>
+        </PersistGate>
     )
 }
