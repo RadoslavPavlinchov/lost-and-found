@@ -12,13 +12,22 @@ import {
     useUpdateItemMutation,
     selectItemById,
 } from "../../../app/api/itemsApiSlice"
+import ShowError from "../../common/ShowError"
+import {
+    validateCategory,
+    validateDescription,
+    validateFiles,
+    validateLocation,
+    validateName,
+    validateStatus,
+} from "../../../utils/validation"
 
 export default function EditItem() {
     const navigate = useNavigate()
     const params = useParams()
     const [updateItem, { isLoading, isSuccess, isError, error }] =
         useUpdateItemMutation()
-        
+
     const item = useSelector((state) => selectItemById(state, params.id))
 
     const [formData, setFormData] = useState({
@@ -29,10 +38,12 @@ export default function EditItem() {
         category: item.category,
         imageUrls: item.imageUrls,
     })
+
+    const [modifiedFields, setModifiedFields] = useState({})
+
     const [files, setFiles] = useState([])
 
     const [errorMsg, setErrorMsg] = useState("")
-
 
     useEffect(() => {
         if (isSuccess) {
@@ -66,6 +77,11 @@ export default function EditItem() {
         setFormData({
             ...formData,
             [e.target.id]: e.target.value,
+        })
+
+        setModifiedFields({
+            ...modifiedFields,
+            [e.target.name]: true,
         })
     }
 
@@ -136,8 +152,39 @@ export default function EditItem() {
     const handleSubmit = async (e) => {
         e.preventDefault()
 
-        try {
+        if (modifiedFields.name && !validateName(formData.name)) {
+            console.log("name validation", formData.name, modifiedFields.name)
+            return setErrorMsg("Name must be between 3 and 50 characters long")
+        }
 
+        if (
+            modifiedFields.description &&
+            !validateDescription(formData.description)
+        ) {
+            return setErrorMsg(
+                "Description must be between 3 and 240 characters long"
+            )
+        }
+
+        if (modifiedFields.location && !validateLocation(formData.location)) {
+            return setErrorMsg(
+                "Location must be between 3 and 50 characters long"
+            )
+        }
+
+        if (modifiedFields.status && !validateStatus(formData.status)) {
+            return setErrorMsg("Status must be either 'found' or 'lost'")
+        }
+
+        if (modifiedFields.category && !validateCategory(formData.category)) {
+            return setErrorMsg("Invalid category")
+        }
+
+        if (modifiedFields.imageUrls && !validateFiles(formData.imageUrls)) {
+            return setErrorMsg("You must upload between 1 and 5 images")
+        }
+
+        try {
             await updateItem({ formData, id: item.id }).unwrap()
 
             setFormData({
@@ -182,6 +229,8 @@ export default function EditItem() {
 
     return (
         <div className="p-2 max-w-md mx-auto">
+            {errorMsg && <ShowError errorMsg={errorMsg} />}
+
             <h2 className="text-center my-7">Edit Item</h2>
 
             <form className="flex flex-col" onSubmit={handleSubmit}>
@@ -190,33 +239,27 @@ export default function EditItem() {
                         className="border rounded-xl p-2"
                         type="text"
                         id="name"
+                        name="name"
                         value={formData.name}
                         onChange={handleChange}
                         placeholder="name"
-                        minLength={3}
-                        maxLength={50}
-                        required
                     />
                     <textarea
                         className="border rounded-xl p-2"
                         id="description"
+                        name="description"
                         value={formData.description}
                         onChange={handleChange}
                         placeholder="Description"
-                        minLength={3}
-                        maxLength={240}
-                        required
                     />
                     <input
                         className="border rounded-xl p-2"
                         type="text"
                         id="location"
+                        name="location"
                         value={formData.location}
                         onChange={handleChange}
                         placeholder="location"
-                        minLength={3}
-                        maxLength={50}
-                        required
                     />
                     <div className="flex flex-col w-full">
                         <label htmlFor="status" className="block ">
@@ -273,6 +316,7 @@ export default function EditItem() {
                                 className="p-2 border rounded w-full"
                                 type="file"
                                 id="images"
+                                name="images"
                                 accept="image/*"
                                 multiple
                             />
@@ -284,12 +328,6 @@ export default function EditItem() {
                                 Upload
                             </button>
                         </div>
-
-                        {isError && (
-                            <p className="text-red-700 text-center">
-                                {errorMsg}
-                            </p>
-                        )}
 
                         {
                             <div className="flex flex-wrap gap-4">

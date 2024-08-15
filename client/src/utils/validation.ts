@@ -24,4 +24,15 @@ export const validateDescription = (description) =>
 export const validateLocation = (location) =>
     location.length >= 3 && location.length <= 50
 
+export const validateStatus = (status) =>
+    status === "found" || status === "lost"
+
+export const validateCategory = (category) =>
+    category === "accessories" ||
+    category === "clothing" ||
+    category === "electronics" ||
+    category === "personal" ||
+    category === "miscellaneous" ||
+    category === "other"
+
 export const validateFiles = (files) => files.length > 0 && files.length <= 5
