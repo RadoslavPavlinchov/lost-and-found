@@ -32,14 +32,14 @@ const navigationConfig = [
             public: true,
         },
     },
-    {
-        text: "Admin",
-        to: "/admin",
-        visibility: {
-            private: ["admin"],
-            public: false,
-        },
-    },
+    // {
+    //     text: "Admin",
+    //     to: "/admin",
+    //     visibility: {
+    //         private: ["admin"],
+    //         public: false,
+    //     },
+    // },
     // {
     //     text: "Register",
     //     to: "/register",

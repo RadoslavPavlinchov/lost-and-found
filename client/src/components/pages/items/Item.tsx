@@ -28,7 +28,7 @@ export default function Item({ item }) {
                         {item.name}
                     </p>
                 </div>
-                <p className="mt-1 text-lg font-medium text-gray-900">
+                <p className="mt-1 p-2 text-lg font-medium text-gray-900 truncate">
                     {item.description}
                 </p>
 

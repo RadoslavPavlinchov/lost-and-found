@@ -63,12 +63,12 @@ export default function Home() {
             ids.length && (
                 <div className="">
                     <div className="my-4">
-                        <h2 className="text-gray-800 font-bold text-2xl lg:text-4xl">
+                        <h2 className="text-gray-800 font-bold text-2xl lg:text-4xl mb-4">
                             {title}
                         </h2>
                         {isLoading && <p>Loading...</p>}
                         {isError && <p>Error loading items.</p>}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pb-4">
                             {ids.map((id) => (
                                 <Item key={id} item={entities[id]} />
                             ))}
@@ -83,9 +83,9 @@ export default function Home() {
     }
 
     return (
-        <div className="max-w-7xl mx-auto min-h-screen">
+        <div className="max-w-7xl mx-auto min-h-screen  text-center">
             {/* TOP SIDE */}
-            <div className="flex flex-col gap-8 py-28 px-4">
+            <div className="flex flex-col gap-8 py-28 px-4 bg-gray-100 mt-5">
                 <h1 className="text-gray-800 font-bold text-3xl lg:text-6xl">
                     Find your items with ease
                 </h1>
@@ -98,18 +98,18 @@ export default function Home() {
 
                 <form
                     onSubmit={handleSubmit}
-                    className="bg-gray-200 p-3 rounded-lg flex items-center"
+                    className="bg-gray-400 p-3 rounded-lg flex items-center mx-auto w-full max-w-lg"
                 >
                     <input
                         type="text"
                         name="search"
                         id="search"
                         placeholder="Search..."
-                        className="p-2 rounded-lg border border-gray-400 focus:outline-none w-24 sm:w-64 mx-auto"
+                        className="p-2 rounded-lg border border-gray-400 focus:outline-none flex-grow"
                         value={searchWord}
                         onChange={changeSearchWordChange}
                     />
-                    <button>
+                    <button className="ml-2 p-2">
                         <FaSearch className="text-gray-800 ml-2" />
                     </button>
                 </form>

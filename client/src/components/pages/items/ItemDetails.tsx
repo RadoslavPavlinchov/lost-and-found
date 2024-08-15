@@ -74,9 +74,11 @@ export default function ItemDetails() {
     }
 
     return (
-        <div className="p-4 mx-auto mt-2">
-            <div className="bg-gray-200 rounded-lg p-4 max-w-4xl w-full">
-                <h1 className="text-2xl font-bold mb-4">{item.name}</h1>
+        <div className="flex justify-center items-center min-h-screen">
+            <div className="bg-gray-100 rounded-lg p-4 max-w-4xl w-full">
+                <h1 className="text-2xl font-bold mb-4 break-words">
+                    {item.name}
+                </h1>
                 <p
                     className={`w-full max-w-[65px] text-center p-0.5 rounded-2xl mb-4 ${
                         item.status === "lost"
@@ -97,11 +99,11 @@ export default function ItemDetails() {
                         />
                     ))}
                 </div>
-                <div className="mb-6">
+                <div className="mb-6 break-words">
                     <p className="font-bold">Description:</p>
                     <p> {item.description}</p>
                 </div>
-                <div className="mb-6">
+                <div className="mb-6 break-words">
                     <div className="mb-2">
                         <span className="font-bold">Location:</span>{" "}
                         {item.location}

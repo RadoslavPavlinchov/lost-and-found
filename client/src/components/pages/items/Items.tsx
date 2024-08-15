@@ -23,6 +23,7 @@ export default function Items() {
         isSuccess,
         isError,
         error,
+        refetch,
     } = useGetItemsQuery(query)
 
     const orderedItemsIds = useSelector(selectItemIds)
@@ -75,7 +76,10 @@ export default function Items() {
     //         state: { item }
     //     });
     // };
-    const onShowMoreClick = () => {}
+    const onShowMoreClick = () => {
+
+        refetch()
+    }
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
@@ -105,7 +109,7 @@ export default function Items() {
         const { ids, entities } = items
 
         content = (
-            <div className="flex flex-col md:flex-row max-w-7xl mx-auto">
+            <div className="flex flex-col md:flex-row max-w-7xl mx-auto min-h-screen mt-20">
                 {/* Form container - filter*/}
                 <div className="p-2 border-b-2 md:border-r-2 md:min-h-screen max-w-3xl mr-2 mt-6">
                     <h2>Filter</h2>

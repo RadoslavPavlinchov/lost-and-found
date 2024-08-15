@@ -186,10 +186,12 @@ export default function CreateItem() {
     }
 
     return (
-        <div className="p-2 max-w-md mx-auto">
+        <div className="max-w-md min-h-screen mx-auto my-10">
             {errorMsg && <ShowError errorMsg={errorMsg} />}
 
-            <h2 className="text-center my-7">Create Item</h2>
+            <h2 className="text-center font-semibold text-3xl my-6">
+                Create Item
+            </h2>
 
             <form className="flex flex-col" onSubmit={handleSubmit}>
                 <div className="flex flex-col gap-4">
