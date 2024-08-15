@@ -83,7 +83,7 @@ export default function Home() {
     }
 
     return (
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-7xl mx-auto min-h-screen">
             {/* TOP SIDE */}
             <div className="flex flex-col gap-8 py-28 px-4">
                 <h1 className="text-gray-800 font-bold text-3xl lg:text-6xl">

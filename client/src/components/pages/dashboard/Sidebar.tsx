@@ -32,26 +32,32 @@ export default function Sidebar() {
     if (isError) return <div>Error: {error.data?.message}</div>
 
     return (
-        <div className="flex flex-col w-64 bg-blue text-white">
-            <div className="flex flex-col p-4">
-                <Link
-                    to="/dashboard/profile"
-                    className="py-2 hover:bg-gray-700"
-                >
-                    Profile
-                </Link>
-                <Link
-                    to="/dashboard/create-item"
-                    className="py-2 hover:bg-gray-700"
-                >
-                    Add New Item
-                </Link>
-                <Link
-                    to="/dashboard/my-items"
-                    className="py-2 hover:bg-gray-700"
-                >
-                    My Items
-                </Link>
+        <div className="flex flex-col w-72 bg-blue text-white">
+            <div className="flex flex-col">
+                <div className="py-2 hover:bg-gray-700 w-full border-b-2 border-gray-400">
+                    <Link
+                        to="/dashboard/profile"
+                        className="block w-full h-full pl-4 m-2"
+                    >
+                        Profile
+                    </Link>
+                </div>
+                <div className="py-2 hover:bg-gray-700 w-full border-b-2 border-gray-400">
+                    <Link
+                        to="/dashboard/create-item"
+                        className="block w-full h-full pl-4 m-2"
+                    >
+                        Add New Item
+                    </Link>
+                </div>
+                <div className="py-2 hover:bg-gray-700 w-full border-b-2 border-gray-400">
+                    <Link
+                        to="/dashboard/my-items"
+                        className="block w-full h-full pl-4 m-2"
+                    >
+                        My Items
+                    </Link>
+                </div>
                 {/* <Link
                     to="/dashboard/profile"
                     className="py-2 hover:bg-gray-700"
@@ -64,13 +70,15 @@ export default function Sidebar() {
                 >
                     Lost Items
                 </Link> */}
-                <Link
-                    to="/"
-                    className="py-2 hover:bg-gray-700"
-                    onClick={handleLogout}
-                >
-                    Logout
-                </Link>
+                <div className="py-2 hover:bg-gray-700 w-full border-b-2 border-gray-400">
+                    <Link
+                        to="/"
+                        className="block w-full h-full pl-4 m-2"
+                        onClick={handleLogout}
+                    >
+                        Logout
+                    </Link>
+                </div>
             </div>
         </div>
     )
