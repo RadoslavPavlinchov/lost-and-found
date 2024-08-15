@@ -7,9 +7,10 @@ const initialState = userAdapter.getInitialState()
 export const usersApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
         getUsers: builder.query({
-            query: () => "users",
-            validateStatus: (response, result) =>
-                response.status === 200 && !result.error,
+            query: () => "/users",
+            validateStatus: (response, result) => {
+                return response.status === 200 && !result.isError
+            },
             transformResponse: (responseData) => {
                 const loadedUsers = responseData.map((user) => {
                     user.id = user._id
@@ -31,7 +32,34 @@ export const usersApiSlice = apiSlice.injectEndpoints({
             },
         }),
         getUserItems: builder.query({
-            query: () => "users/items",
+            query: () => "/users/items",
+            validateStatus: (response, result) => {
+                return response.status === 200 && !result.isError
+            },
+            transformResponse: (responseData) => {
+                console.log("Transforming response data", responseData)
+                const loadedUserItems = responseData.map((item) => {
+                    item.id = item._id
+
+                    return item
+                })
+
+                return userAdapter.setAll(initialState, loadedUserItems)
+            },
+            providesTags: (result, error, arg) => {
+                if (result?.ids) {
+                    console.log("Providing tags for user items", [
+                        { type: "Item", id: "LIST" },
+                        ...result.ids.map((id) => ({ type: "Item", id })),
+                    ])
+                    return [
+                        { type: "Item", id: "LIST" },
+                        ...result.ids.map((id) => ({ type: "Item", id })),
+                    ]
+                } else {
+                    return [{ type: "Item", id: "LIST" }]
+                }
+            },
         }),
         addNewUser: builder.mutation({
             query: (initialUserData) => ({
@@ -89,4 +117,5 @@ export const {
     selectAll: selectAllUsers,
     selectById: selectUserById,
     selectIds: selectUserIds,
+    // selectUserItemsById: selectUserItemsById,
 } = userAdapter.getSelectors((state) => selectUsersData(state) ?? initialState)
