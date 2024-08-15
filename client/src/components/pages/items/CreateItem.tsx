@@ -9,6 +9,13 @@ import { app } from "../../../firebase"
 import { useCreateItemMutation } from "../../../app/api/itemsApiSlice"
 import useAuth from "../../../customHooks/useAuth"
 import { useNavigate } from "react-router-dom"
+import {
+    validateDescription,
+    validateFiles,
+    validateLocation,
+    validateName,
+} from "../../../utils/validation"
+import ShowError from "../../common/ShowError"
 
 export default function CreateItem() {
     const navigate = useNavigate()
@@ -83,12 +90,8 @@ export default function CreateItem() {
     }
 
     const handleImageUploadClick = (e) => {
-        if (files.length > 5) {
-            return setErrorMsg("Maximum of 5 images allowed")
-        }
-
-        if (files.length === 0) {
-            return setErrorMsg("No images selected")
+        if (!validateFiles(files)) {
+            return setErrorMsg("You must select between 1 and 5 images")
         }
 
         const imagePromises = Object.values(files).map((file) => {
@@ -136,6 +139,26 @@ export default function CreateItem() {
     const handleSubmit = async (e) => {
         e.preventDefault()
 
+        if (!validateName(formData.name)) {
+            return setErrorMsg("Name must be between 3 and 50 characters long")
+        }
+
+        if (!validateDescription(formData.description)) {
+            return setErrorMsg(
+                "Description must be between 3 and 240 characters long"
+            )
+        }
+
+        if (!validateLocation(formData.location)) {
+            return setErrorMsg(
+                "Location must be between 3 and 50 characters long"
+            )
+        }
+
+        if (!validateFiles(formData.imageUrls)) {
+            return setErrorMsg("You must upload between 1 and 5 images")
+        }
+
         try {
             // add input validations here
 
@@ -164,6 +187,8 @@ export default function CreateItem() {
 
     return (
         <div className="p-2 max-w-md mx-auto">
+            {errorMsg && <ShowError errorMsg={errorMsg} />}
+
             <h2 className="text-center my-7">Create Item</h2>
 
             <form className="flex flex-col" onSubmit={handleSubmit}>
@@ -175,8 +200,6 @@ export default function CreateItem() {
                         value={formData.name}
                         onChange={handleChange}
                         placeholder="name"
-                        minLength={3}
-                        maxLength={50}
                         required
                     />
                     <textarea
@@ -185,8 +208,6 @@ export default function CreateItem() {
                         value={formData.description}
                         onChange={handleChange}
                         placeholder="Description"
-                        minLength={3}
-                        maxLength={240}
                         required
                     />
                     <input
@@ -196,8 +217,6 @@ export default function CreateItem() {
                         value={formData.location}
                         onChange={handleChange}
                         placeholder="location"
-                        minLength={3}
-                        maxLength={50}
                         required
                     />
                     <div className="flex flex-col w-full">
@@ -266,12 +285,6 @@ export default function CreateItem() {
                                 Upload
                             </button>
                         </div>
-
-                        {isError && (
-                            <p className="text-red-700 text-center">
-                                {errorMsg}
-                            </p>
-                        )}
 
                         {
                             <div className="flex flex-wrap gap-4">

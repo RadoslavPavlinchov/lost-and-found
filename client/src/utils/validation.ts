@@ -15,3 +15,13 @@ export const validatePasswordSpecialChar = (password) => {
     const re = /[ `!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?~]/
     return re.test(password)
 }
+
+export const validateName = (name) => name.length >= 3 && name.length <= 50
+
+export const validateDescription = (description) =>
+    description.length >= 3 && description.length <= 240
+
+export const validateLocation = (location) =>
+    location.length >= 3 && location.length <= 50
+
+export const validateFiles = (files) => files.length > 0 && files.length <= 5
