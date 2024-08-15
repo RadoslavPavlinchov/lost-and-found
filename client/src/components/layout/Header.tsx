@@ -39,7 +39,7 @@ export default function Header() {
 
     return (
         <header className="bg-darkBlue shadow-md">
-            <div className="flex justify-between items-center mx-4 p-4">
+            <div className="flex justify-between items-center mx-4 p-4 text-sm sm:text-xl">
                 <Logo />
 
                 <Navbar />
