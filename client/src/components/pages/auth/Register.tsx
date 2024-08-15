@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom"
 import { useRegisterMutation } from "../../../app/api/authApiSlice"
 import { setCredentials } from "../../../app/api/authSlice"
 import Button from "../../common/Button"
+import ShowError from "../../common/ShowError"
 import {
     validateEmail,
     validatePasswordLength,
@@ -13,7 +14,6 @@ import {
 
 export default function Register() {
     const nameRef = useRef()
-    const errorRef = useRef()
 
     const [formData, setFormData] = useState({
         name: "",
@@ -28,7 +28,7 @@ export default function Register() {
     const [register, { isLoading }] = useRegisterMutation()
 
     useEffect(() => {
-        nameRef.current.focus()
+        nameRef?.current?.focus()
     }, [])
 
     useEffect(() => {
@@ -84,72 +84,76 @@ export default function Register() {
             }
 
             setErrorMsg(error.data?.message)
-
-            errorRef.current.focus()
         }
     }
 
     const handleChange = (e) => {
         setFormData({
             ...formData,
-            [e.target.name]: e.target.value,
+            [e.target.name]: e.target.value.trim(),
         })
     }
 
-    if (isLoading) return <div>Loading...</div>
+    let content
 
-    return (
-        <div className="max-w-md mx-auto">
-            {errorMsg && (
-                <div ref={errorRef} className="text-red-700 text-center">
-                    {errorMsg}
-                </div>
-            )}
-
-            <h2 className="text-center my-7">Register</h2>
-
-            <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-                <input
-                    className="border rounded-xl p-2 focus:outline-none"
-                    type="text"
-                    id="name"
-                    name="name"
-                    placeholder="Name"
-                    ref={nameRef}
-                    required
-                    onChange={handleChange}
-                    value={formData.name}
-                />
-                <input
-                    className="border rounded-xl p-2 focus:outline-none"
-                    type="email"
-                    id="email"
-                    name="email"
-                    placeholder="Email"
-                    required
-                    onChange={handleChange}
-                    value={formData.email}
-                />
-                <input
-                    className="border rounded-xl  p-2 focus:outline-none"
-                    type="password"
-                    id="password"
-                    name="password"
-                    placeholder="Password"
-                    required
-                    onChange={handleChange}
-                    value={formData.password}
-                />
-
-                <Button label="Register" type="submit" />
-            </form>
-
-            <div className="flex justify-center gap-2 p-2 mt-4">
-                <p>Already have an account?</p>
-                <Link to="/login">
-                    <span className="text-blue">Login</span>
-                </Link>
+    if (isLoading) {
+        content = (
+            <div className="text-2xl font-bold text-gray-600 text-center">
+                Loading...
             </div>
-        </div>
-    )
+        )
+    } else {
+        content = (
+            <>
+                {errorMsg && <ShowError errorMsg={errorMsg} />}
+
+                <h2 className="text-center my-7">Register</h2>
+
+                <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+                    <input
+                        className="border rounded-xl p-2 focus:outline-none"
+                        type="text"
+                        id="name"
+                        name="name"
+                        placeholder="Name"
+                        ref={nameRef}
+                        required
+                        onChange={handleChange}
+                        value={formData.name}
+                    />
+                    <input
+                        className="border rounded-xl p-2 focus:outline-none"
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="Email"
+                        required
+                        onChange={handleChange}
+                        value={formData.email}
+                    />
+                    <input
+                        className="border rounded-xl  p-2 focus:outline-none"
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Password"
+                        required
+                        onChange={handleChange}
+                        value={formData.password}
+                    />
+
+                    <Button label="Register" type="submit" />
+                </form>
+
+                <div className="flex justify-center gap-2 p-2 mt-4">
+                    <p>Already have an account?</p>
+                    <Link to="/login">
+                        <span className="text-blue">Login</span>
+                    </Link>
+                </div>
+            </>
+        )
+    }
+
+    return <div className="max-w-md min-h-screen mx-auto mt-20">{content}</div>
 }
