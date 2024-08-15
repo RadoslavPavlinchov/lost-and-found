@@ -33,6 +33,7 @@ const login = async (req, res) => {
                     email: user.email,
                     name: user.name,
                     role: user.role,
+                    avatar: user.avatar,
                 },
             },
             process.env.ACCESS_TOKEN_SECRET,
@@ -89,7 +90,7 @@ const logout = async (req, res) => {
 
 const register = async (req, res) => {
     try {
-        const { name, email, password, role = "user" } = req.body
+        const { name, email, password, role = "user", avatar } = req.body
 
         if (!name || !email || !password || !role) {
             return res.status(400).json({ msg: "All fields are required!" })
@@ -108,6 +109,7 @@ const register = async (req, res) => {
             email,
             role,
             password: hashPassword,
+            avatar,
         })
 
         if (user) {
@@ -120,6 +122,7 @@ const register = async (req, res) => {
                         email: user.email,
                         name: user.name,
                         role: user.role,
+                        avatar: user.avatar,
                     },
                 },
                 process.env.ACCESS_TOKEN_SECRET,
@@ -133,6 +136,7 @@ const register = async (req, res) => {
                     email: user.email,
                     name: user.name,
                     role: user.role,
+                    avatar: user.avatar,
                 },
                 process.env.REFRESH_TOKEN_SECRET,
                 {
@@ -186,6 +190,7 @@ const refresh = async (req, res) => {
                             email: foundUser.email,
                             name: foundUser.name,
                             role: foundUser.role,
+                            avatar: foundUser.avatar,
                         },
                     },
                     process.env.ACCESS_TOKEN_SECRET,

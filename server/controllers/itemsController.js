@@ -65,6 +65,15 @@ const getAllItems = async (req, res) => {
     }
 }
 
+const getItemsCount = async (req, res) => {
+    try {
+        const items = await Item.find().lean().exec()
+        res.status(200).json(items.length)
+    } catch (error) {
+        res.status(400).json({ error })
+    }
+}
+
 const getUserItems = async (req, res) => {
     try {
         const id = req.params.id
@@ -203,6 +212,7 @@ const deleteItem = async (req, res) => {
 
 export {
     getAllItems,
+    getItemsCount,
     getUserItems,
     getItem,
     createItem,

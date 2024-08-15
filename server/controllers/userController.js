@@ -97,6 +97,7 @@ const updateUser = async (req, res) => {
                     email: rest.email,
                     name: rest.name,
                     role: rest.role,
+                    avatar: rest.avatar,
                 },
             },
             process.env.ACCESS_TOKEN_SECRET,
@@ -110,6 +111,7 @@ const updateUser = async (req, res) => {
                 email: rest.email,
                 name: rest.name,
                 role: rest.role,
+                avatar: rest.avatar,
             },
             process.env.REFRESH_TOKEN_SECRET,
             {
