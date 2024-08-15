@@ -4,6 +4,10 @@ import { useDispatch } from "react-redux"
 
 import { setCredentials } from "../../../app/api/authSlice"
 import { useLoginMutation } from "../../../app/api/authApiSlice"
+import {
+    validateEmail,
+    validatePasswordLength,
+} from "../../../utils/validation"
 import Button from "../../common/Button"
 
 export default function Login() {
@@ -31,6 +35,14 @@ export default function Login() {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
+
+        if (!validateEmail(formData.email)) {
+            return setErrorMsg("Please enter a valid email address")
+        }
+
+        if (!validatePasswordLength(formData.password)) {
+            return setErrorMsg("Password must be at least 6 characters long")
+        }
 
         try {
             const { accessToken } = await login(formData).unwrap()
@@ -73,7 +85,11 @@ export default function Login() {
 
     return (
         <div className="max-w-md mx-auto">
-            <p ref={errorRef}>{errorMsg}</p>
+            {errorMsg && (
+                <div ref={errorRef} className="text-red-700 text-center">
+                    {errorMsg}
+                </div>
+            )}
 
             <h2 className="text-center my-7">Login</h2>
 

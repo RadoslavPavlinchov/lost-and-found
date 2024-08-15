@@ -4,6 +4,12 @@ import { Link, useNavigate } from "react-router-dom"
 import { useRegisterMutation } from "../../../app/api/authApiSlice"
 import { setCredentials } from "../../../app/api/authSlice"
 import Button from "../../common/Button"
+import {
+    validateEmail,
+    validatePasswordLength,
+    validatePasswordSpecialChar,
+    validateUsername,
+} from "../../../utils/validation"
 
 export default function Register() {
     const nameRef = useRef()
@@ -31,6 +37,26 @@ export default function Register() {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
+
+        if (!validateEmail(formData.email)) {
+            return setErrorMsg("Please enter a valid email address")
+        }
+
+        if (!validateUsername(formData.name)) {
+            return setErrorMsg(
+                "Username must be between 3 and 20 characters long"
+            )
+        }
+
+        if (!validatePasswordLength(formData.password)) {
+            return setErrorMsg("Password must be at least 6 characters long")
+        }
+
+        if (!validatePasswordSpecialChar(formData.password)) {
+            return setErrorMsg(
+                "Password must contain at least one special character"
+            )
+        }
 
         try {
             const { accessToken } = await register(formData).unwrap()
@@ -74,7 +100,11 @@ export default function Register() {
 
     return (
         <div className="max-w-md mx-auto">
-            <p ref={errorRef}>{errorMsg}</p>
+            {errorMsg && (
+                <div ref={errorRef} className="text-red-700 text-center">
+                    {errorMsg}
+                </div>
+            )}
 
             <h2 className="text-center my-7">Register</h2>
 
