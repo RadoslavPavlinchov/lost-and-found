@@ -67,7 +67,7 @@ export default function App() {
                             <Route element={<ItemDetails />} path="items/:id" />
                             <Route element={<AboutUs />} path="aboutUs" />
                             <Route element={<Contacts />} path="contacts" />
-                            {/* <Route element={<AdminPrivateRoute />} path="admin">
+                            <Route element={<AdminPrivateRoute />} path="admin">
                                 <Route element={<Admin />} path="">
                                     <Route
                                         element={<AdminUsers />}
@@ -86,7 +86,7 @@ export default function App() {
                                         path="items"
                                     />
                                 </Route>
-                            </Route> */}
+                            </Route>
                             <Route element={<PublicRoute />} path="register">
                                 <Route element={<Register />} path="" />
                             </Route>

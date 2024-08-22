@@ -32,30 +32,30 @@ const navigationConfig = [
             public: true,
         },
     },
-    // {
-    //     text: "Admin",
-    //     to: "/admin",
-    //     visibility: {
-    //         private: ["admin"],
-    //         public: false,
-    //     },
-    // },
-    // {
-    //     text: "Register",
-    //     to: "/register",
-    //     visibility: {
-    //         private: [],
-    //         public: true
-    //     }
-    // },
-    // {
-    //     text: "Login",
-    //     to: "/login",
-    //     visibility: {
-    //         private: [],
-    //         public: true
-    //     }
-    // },
+    {
+        text: "Admin",
+        to: "/admin",
+        visibility: {
+            private: ["admin"],
+            public: false,
+        },
+    },
+    {
+        text: "Register",
+        to: "/register",
+        visibility: {
+            private: [],
+            public: true,
+        },
+    },
+    {
+        text: "Login",
+        to: "/login",
+        visibility: {
+            private: [],
+            public: true,
+        },
+    },
 ]
 
 export default navigationConfig
