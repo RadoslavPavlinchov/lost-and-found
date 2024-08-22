@@ -1,16 +1,5 @@
 import jwt from "jsonwebtoken"
-
-async function confirmAdminAccount(req, res) {
-    const user = await User.findById({ _id: req.userInfo.id }).exec()
-
-    if (!user) {
-        return res.status(404).json({ msg: "No such user", id })
-    }
-
-    if (user.role !== "admin") {
-        return res.status(403).json({ msg: "Access denied" })
-    }
-}
+import User from "../models/User.js"
 
 const verifyAdmin = (req, res, next) => {
     const authHeader = req.headers.authorization || req.headers.Authorization
@@ -34,8 +23,6 @@ const verifyAdmin = (req, res, next) => {
                     msg: "You are not an admin, authorization denied.",
                 })
             }
-
-            confirmAdminAccount(req, res)
 
             req.userInfo = user.userInfo
 

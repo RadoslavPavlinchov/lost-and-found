@@ -28,6 +28,20 @@ const getUser = async (req, res) => {
     }
 }
 
+const getAllUsers = async (req, res) => {
+    try {
+        const users = await User.find().select("-password").lean()
+
+        if (!users?.length) {
+            return res.status(400).json({ msg: "No users available" })
+        }
+
+        res.status(200).json(users)
+    } catch (error) {
+        res.status(400).json({ msg: error })
+    }
+}
+
 const createUser = async (req, res) => {
     try {
         const { name, email, password, role } = req.body
@@ -176,4 +190,4 @@ const deleteUser = async (req, res) => {
     }
 }
 
-export { getUser, createUser, updateUser, deleteUser }
+export { getUser, getAllUsers, createUser, updateUser, deleteUser }
